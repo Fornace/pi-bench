@@ -1,0 +1,185 @@
+rank,id,provider,api,family,reasoning,reasoned,t_first_byte_ms,t_complete_ms,prompt_tokens,output_tokens,tokens_estimated,cost_input,cost_output,cost_usd,status,quality,sample
+1,qwen-flash,alibaba-cloud,anthropic-messages,flash,false,false,439,613,67,27,false,0,0,0,ok,ok,"Your Go script hangs after 1000 HTTPS API calls due to unman"
+2,qwen-flash-character,alibaba-cloud,anthropic-messages,flash,false,false,459,652,32,30,false,0,0,0,ok,multi-sentence,"I'd start by encapsulating related tasks into functions, the"
+3,qwen-vl-plus-2025-05-07,alibaba-cloud,anthropic-messages,plus,false,false,510,655,56,18,false,0,0,0,ok,ok,"The TypeScript service returned 100 records but the fetch re"
+4,qwen-vl-plus,alibaba-cloud,anthropic-messages,plus,false,false,457,686,62,25,false,0,0,0,ok,ok,"Refactored a 30-line Rust scraper that called Vercel in a lo"
+5,qwen-plus-2025-09-11,alibaba-cloud,anthropic-messages,plus,false,false,570,698,56,18,false,0,0,0,ok,ok,"The Go pipeline crashed on iteration 200 with a timeout erro"
+6,qwen3.5-122b-a10b,alibaba-cloud,anthropic-messages,(other),true,false,555,706,61,19,false,0,0,0,ok,ok,"The user reported that their Python service returns 1000 rec"
+7,qwen-turbo-2024-11-01,alibaba-cloud,anthropic-messages,turbo,false,false,514,727,62,22,false,0,0,0,ok,ok,"The user sought assistance in simplifying their lengthy Rust"
+8,qwen-vl-plus-latest,alibaba-cloud,anthropic-messages,plus,false,false,471,753,56,21,false,0,0,0,ok,ok,"The TypeScript pipeline crashed on iteration 500 due to a ti"
+9,qwen-turbo-latest,alibaba-cloud,anthropic-messages,turbo,false,false,499,760,59,20,false,0,0,0,ok,ok,"Writing a Rust script to process 30 rows from a CSV caused m"
+10,qwen-plus-2025-04-28,alibaba-cloud,anthropic-messages,plus,false,false,529,791,59,20,false,0,0,0,ok,ok,"The TypeScript worker crashed on iteration 30 due to a timeo"
+11,qwen3.5-35b-a3b,alibaba-cloud,anthropic-messages,(other),true,false,640,814,59,20,false,0,0,0,ok,ok,"The user wrote a Rust script to process 50 CSV rows but enco"
+12,qwen-turbo-2025-04-28,alibaba-cloud,anthropic-messages,turbo,false,false,502,819,77,27,false,0,0,0,ok,ok,"Your Node.js script hangs after 200 HTTPS API calls despite "
+13,qwen-turbo,alibaba-cloud,anthropic-messages,turbo,false,false,526,828,60,20,false,0,0,0,ok,ok,"The TypeScript migration crashed on iteration 100 due to a t"
+14,qwen-plus-2025-07-14,alibaba-cloud,anthropic-messages,plus,false,false,586,841,56,19,false,0,0,0,ok,ok,"Wrote a Python script to process 100 CSV rows but encountere"
+15,qwen-vl-plus-2025-01-25,alibaba-cloud,anthropic-messages,plus,false,false,572,861,62,24,false,0,0,0,ok,ok,"The Go scraper was refactored, reducing its size from five h"
+16,qwen3.5-27b,alibaba-cloud,anthropic-messages,(other),true,false,579,870,68,27,false,0,0,0,ok,ok,"You attempted to debug a Go script that hung after 50 iterat"
+17,qwen-plus-2025-01-25,alibaba-cloud,anthropic-messages,plus,false,false,560,909,56,20,false,0,0,0,ok,ok,"The Python worker crashed on iteration 200 due to a timeout "
+18,qwen3-vl-flash-2025-10-15,alibaba-cloud,anthropic-messages,flash,false,false,653,931,61,23,false,0,0,0,ok,ok,"The user sought help refactoring a 200-line Ruby pipeline th"
+19,qwen3-vl-flash-2026-01-22,alibaba-cloud,anthropic-messages,flash,false,false,590,932,68,31,false,0,0,0,ok,ok,"The Node.js script hangs after 1000 HTTPS API iterations due"
+20,qwen3.5-flash-2026-02-23,alibaba-cloud,anthropic-messages,flash,true,false,674,958,59,18,false,0,0,0,ok,ok,"The Go pipeline crashed on iteration 50 with a timeout error"
+21,qwen3.5-flash,alibaba-cloud,anthropic-messages,flash,true,false,608,996,59,19,false,0,0,0,ok,ok,"The user wrote a Ruby script to process 30 CSV rows but enco"
+22,qwen-max-latest,alibaba-cloud,anthropic-messages,max,true,false,517,998,55,22,false,0,0,0,ok,ok,"The user reported that the Go migration crashed on iteration"
+23,qwen-vl-max-2025-08-13,alibaba-cloud,anthropic-messages,max,true,false,428,999,57,28,false,0,0,0,ok,ok,"You encountered a performance issue where your Ruby service,"
+24,qwen3-vl-plus,alibaba-cloud,anthropic-messages,plus,false,false,624,1004,62,26,false,0,0,0,ok,ok,"The Rust service returned 50 records with a slow response ti"
+25,qwen-max,alibaba-cloud,anthropic-messages,max,true,false,557,1008,66,30,false,0,0,0,ok,ok,"The user tried to debug a Ruby script that hangs after 500 i"
+26,qwen-plus-latest,alibaba-cloud,anthropic-messages,plus,false,false,679,1032,58,23,false,0,0,0,ok,ok,"The Rust service returned 1000 records, but the response tim"
+27,qwen3-vl-plus-2025-09-23,alibaba-cloud,anthropic-messages,plus,false,false,577,1041,57,27,false,0,0,0,ok,ok,"The Rust service returned 200 records via httpx, but the res"
+28,qwen-vl-max,alibaba-cloud,anthropic-messages,max,true,false,552,1066,65,29,false,0,0,0,ok,ok,"You attempted to debug a Go script that hangs after 100 iter"
+29,qwen3-vl-flash,alibaba-cloud,anthropic-messages,flash,false,false,534,1082,56,22,false,0,0,0,ok,ok,"The Python pipeline crashed on iteration 200 due to a timeou"
+30,qwen3-coder-plus-2025-07-22,alibaba-cloud,anthropic-messages,plus,false,false,883,1143,56,25,false,0,0,0,ok,ok,"The user wrote a Go script to process 100 rows from a CSV fi"
+31,qwen-vl-max-2025-04-08,alibaba-cloud,anthropic-messages,max,true,false,469,1150,55,25,false,0,0,0,ok,ok,"The user reported that their Ruby service, using fetch, retu"
+32,qwen3-vl-plus-2025-12-19,alibaba-cloud,anthropic-messages,plus,false,false,839,1168,57,25,false,0,0,0,ok,ok,"The user wrote a TypeScript script to process 1000 CSV rows "
+33,qwen3-coder-flash,alibaba-cloud,anthropic-messages,flash,false,false,968,1174,57,21,false,0,0,0,ok,ok,"The Node.js worker crashed on iteration 500 due to a timeout"
+34,qwen-plus-2025-12-01,alibaba-cloud,anthropic-messages,plus,false,false,718,1198,56,21,false,0,0,0,ok,ok,"The user wrote a Go script to process 200 CSV rows but obser"
+35,MiniMaxAI/MiniMax-M2.5,huggingface,openai-completions,mini,true,true,1217,1250,30,128,false,0.3,1.2,0.0001626,ok,ok,"User reported their Rust service returning 100 records has"
+36,qwen3.5-plus-2026-02-15,alibaba-cloud,anthropic-messages,plus,true,false,957,1267,64,20,false,0,0,0,ok,ok,"The user requested assistance refactoring a 50-line Ruby sch"
+37,qwen3.5-plus,alibaba-cloud,anthropic-messages,plus,true,false,985,1277,60,19,false,0,0,0,ok,ok,"The Ruby worker crashed on iteration 200 with a timeout erro"
+38,qwen-max-2025-01-25,alibaba-cloud,anthropic-messages,max,true,false,510,1290,57,23,false,0,0,0,ok,ok,"User wrote a Node.js script to process 200 rows from a CSV b"
+39,qwen3-coder-next,alibaba-cloud,anthropic-messages,(other),false,false,1050,1328,66,36,false,0,0,0,ok,ok,"Your Ruby script hangs after 100 HTTPS API calls despite usi"
+40,qwen3-coder-480b-a35b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,1091,1345,55,24,false,0,0,0,ok,ok,"The user wrote a Python script to process 50 rows from a CSV"
+41,qwen-vl-max-latest,alibaba-cloud,anthropic-messages,max,true,false,511,1354,63,33,false,0,0,0,ok,ok,"You observed that your Go service returns 100 records but th"
+42,qwen3-coder-plus-2025-09-23,alibaba-cloud,anthropic-messages,plus,false,false,949,1356,64,22,false,0,0,0,ok,ok,"The user was debugging a Python script that hangs after 30 H"
+43,qwen-plus,alibaba-cloud,anthropic-messages,plus,false,false,678,1431,62,41,false,0,0,0,ok,ok,"Refactored a 200-line Python migration by decoupling OpenAI "
+44,gemini-3-flash-preview,google-vertex,google-vertex,flash,true,false,1255,1433,45,26,false,0.5,3,0.0001005,ok,ok,"The user reported a Ruby pipeline crash occurring at iterati"
+45,MiniMaxAI/MiniMax-M2.7,huggingface,openai-completions,mini,true,true,1314,1496,56,75,false,0.3,1.2,0.0001068,ok,ok,"The Rust worker crashed on iteration 500 with a timeout erro"
+46,Qwen/Qwen3-Next-80B-A3B-Instruct,huggingface,openai-completions,(other),false,false,1376,1546,61,24,false,0.25,1,0.00003925,ok,ok,"The user needed help refactoring a 100-line TypeScript migra"
+47,qwen3-max-preview,alibaba-cloud,anthropic-messages,max,true,false,1139,1558,63,26,false,0,0,0,ok,ok,"The user reported their Go service returns 500 records too s"
+48,qwen3-coder-plus,alibaba-cloud,anthropic-messages,plus,false,false,917,1560,65,27,false,0,0,0,ok,ok,"The user was debugging a Python script that hangs after 200 "
+49,Qwen/Qwen3-Coder-480B-A35B-Instruct,huggingface,openai-completions,(other),false,false,1335,1574,0,0,false,2,2,0,ok,ok,"The user's TypeScript service successfully returned 1000 rec"
+50,qwen3.5-397b-a17b,alibaba-cloud,anthropic-messages,(other),true,false,1152,1574,61,24,false,0,0,0,ok,ok,"The user reported that the TypeScript pipeline crashed on it"
+51,qwen3-max,alibaba-cloud,anthropic-messages,max,true,false,1058,1574,56,20,false,0,0,0,ok,ok,"The user wrote a Python script to process 100 CSV rows but n"
+52,deepseek-ai/DeepSeek-R1-0528,huggingface,openai-completions,(other),true,true,1437,1616,52,128,false,3,5,0.000796,ok,ok,"User requested assistance refactoring a Rust web scraper tha"
+53,qwen3-max-2026-01-23,alibaba-cloud,anthropic-messages,max,true,false,1120,1821,68,32,false,0,0,0,ok,ok,"The user was debugging a Python script that hangs after 30 i"
+54,qwen3.6-flash-2026-04-16,alibaba-cloud,anthropic-messages,flash,true,false,1535,1834,61,24,false,0,0,0,ok,ok,"The user reported that the TypeScript pipeline crashed with "
+55,moonshotai/Kimi-K2-Instruct,huggingface,openai-completions,kimi,false,false,1199,1863,60,27,false,1,3,0.000141,ok,ok,"The user reported that their Rust service was returning 1000"
+56,qwen3-max-2025-09-23,alibaba-cloud,anthropic-messages,max,true,false,1175,1895,57,26,false,0,0,0,ok,ok,"The user's Node.js service, using the `got` library, returns"
+57,qwen3.6-27b,alibaba-cloud,anthropic-messages,(other),true,false,1582,1986,60,27,false,0,0,0,ok,ok,"The user reported that their Ruby service, which uses the `g"
+58,qwen3.6-flash,alibaba-cloud,anthropic-messages,flash,true,false,1802,2091,59,22,false,0,0,0,ok,ok,"The user wrote a TypeScript script to process 50 rows from a"
+59,XiaomiMiMo/MiMo-V2-Flash,huggingface,openai-completions,flash,true,false,1896,2248,25,29,false,0.1,0.3,0.0000112,ok,ok,"The script processed 50 CSV rows, but memory usage increased"
+60,qwen3.6-plus,alibaba-cloud,anthropic-messages,plus,true,false,1871,2252,60,23,false,0,0,0,ok,ok,"The user reported increasing memory usage while writing a Go"
+61,deepseek-ai/DeepSeek-V4-Pro,huggingface,openai-completions,pro,true,true,2228,2266,56,128,false,1.74,3.48,0.00054288,ok,ok,"The user debugged"
+62,qwen3.5-plus-2026-04-20,alibaba-cloud,anthropic-messages,plus,true,false,2050,2331,65,20,false,0,0,0,ok,ok,"The user requested assistance refactoring a 200-line Ruby pi"
+63,kimi-for-coding,kimi-coding,anthropic-messages,kimi,true,false,2019,2383,54,30,false,0,0,0,ok,ok,"The user reported that their Go web scraper consistently cra"
+64,Qwen/Qwen3-Coder-Next,huggingface,openai-completions,(other),false,false,2154,2406,56,25,false,0.2,1.5,0.000048700000000000005,ok,ok,"Your Go service returned 200 records via an HTTP endpoint, b"
+65,qwen3.6-plus-2026-04-02,alibaba-cloud,anthropic-messages,plus,true,false,2100,2510,65,21,false,0,0,0,ok,ok,"The user requested assistance refactoring a 30-line Node.js "
+66,qwen3.6-plus,alibaba-plan,anthropic-messages,plus,true,false,2150,2554,60,23,false,0,0,0,ok,ok,"The user reported that the Python scheduler crashed with a t"
+67,MiniMaxAI/MiniMax-M2.1,huggingface,openai-completions,mini,true,true,2505,2646,57,54,false,0.3,1.2,0.00008189999999999998,ok,ok,"User reported that the TypeScript scheduler crashes at itera"
+68,gemini-3.1-pro-preview,google-vertex,google-vertex,pro,true,false,2373,2751,50,124,false,2,12,0.001588,ok,ok,"The user reported that"
+69,glm-5,alibaba-plan,anthropic-messages,glm,true,false,2262,2862,50,23,false,0,0,0,ok,ok,"The user reported that their Node.js pipeline crashes on ite"
+70,gemini-3.1-pro-preview-customtools,google-vertex,google-vertex,pro,true,false,2875,3013,48,124,false,2,12,0.001584,ok,ok,"Rust service, axios@"
+71,qwen3.6-max-preview,alibaba-cloud,anthropic-messages,max,true,false,3356,3598,59,18,false,0,0,0,ok,ok,"The Python worker crashed on iteration 50 with a timeout err"
+-,gemini-1.5-flash,google-vertex,google-vertex,flash,false,false,,4001,,,false,0.075,0.3,,timeout,n/a,""
+-,gemini-1.5-flash-8b,google-vertex,google-vertex,flash,false,false,,4000,,,false,0.0375,0.15,,timeout,n/a,""
+-,gemini-1.5-pro,google-vertex,google-vertex,pro,false,false,,4000,,,false,1.25,5,,timeout,n/a,""
+-,gemini-2.0-flash,google-vertex,google-vertex,flash,false,false,,4000,,,false,0.15,0.6,,timeout,n/a,""
+-,gemini-2.0-flash-lite,google-vertex,google-vertex,flash-lite,true,false,,4001,,,false,0.075,0.3,,timeout,n/a,""
+-,gemini-2.5-flash,google-vertex,google-vertex,flash,true,false,,4001,,,false,0.3,2.5,,timeout,n/a,""
+-,gemini-2.5-flash-lite,google-vertex,google-vertex,flash-lite,true,false,,4001,,,false,0.1,0.4,,timeout,n/a,""
+-,gemini-2.5-flash-lite-preview-09-2025,google-vertex,google-vertex,flash-lite,true,false,,4001,,,false,0.1,0.4,,timeout,n/a,""
+-,gemini-2.5-pro,google-vertex,google-vertex,pro,true,false,,4001,,,false,1.25,10,,timeout,n/a,""
+-,gemini-3-pro-preview,google-vertex,google-vertex,pro,true,false,,244,,,false,2,12,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
+-,Qwen/Qwen3-235B-A22B-Thinking-2507,huggingface,openai-completions,(other),true,false,1499,4001,,,false,0.3,3,,timeout,n/a,"<think>
+We are given a user message: ""Need help refactoring "
+-,Qwen/Qwen3-Next-80B-A3B-Thinking,huggingface,openai-completions,(other),false,true,,4002,,,false,0.3,2,,timeout,n/a,""
+-,Qwen/Qwen3.5-397B-A17B,huggingface,openai-completions,(other),true,true,,2325,58,128,false,0.6,3.6,0.0004956,empty,empty,""
+-,deepseek-ai/DeepSeek-V3.2,huggingface,openai-completions,(other),true,true,,3412,20,128,false,0.28,0.4,0.000056800000000000005,empty,empty,""
+-,moonshotai/Kimi-K2-Instruct-0905,huggingface,openai-completions,kimi,false,true,,4000,,,false,1,3,,timeout,n/a,""
+-,moonshotai/Kimi-K2-Thinking,huggingface,openai-completions,kimi,true,true,,4002,,,false,0.6,2.5,,timeout,n/a,""
+-,moonshotai/Kimi-K2.5,huggingface,openai-completions,kimi,true,false,,4000,,,false,0.6,3,,timeout,n/a,""
+-,moonshotai/Kimi-K2.6,huggingface,openai-completions,kimi,true,true,,3076,53,128,false,0.95,4,0.00056235,empty,empty,""
+-,zai-org/GLM-4.7,huggingface,openai-completions,glm,true,false,,251,,,false,0.6,2.2,,error:400 400 status code (no body),n/a,""
+-,zai-org/GLM-4.7-Flash,huggingface,openai-completions,glm,true,false,,151,,,false,0,0,,error:400 400 The requested model 'zai-org/GLM-4.7,n/a,""
+-,zai-org/GLM-5,huggingface,openai-completions,glm,true,true,,2105,53,128,false,1,3.2,0.0004626,empty,empty,""
+-,zai-org/GLM-5.1,huggingface,openai-completions,glm,true,true,,2619,63,128,false,1,3.2,0.00047260000000000005,empty,empty,""
+-,kimi-k2-thinking,kimi-coding,anthropic-messages,kimi,true,false,1862,4001,,,false,0,0,,timeout,n/a,"The user reported that their Ruby service, which uses `fetch"
+-,qwen3.5-plus,alibaba-plan,anthropic-messages,plus,true,false,,1104,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"ea41,n/a,""
+-,kimi-k2.5,alibaba-plan,anthropic-messages,kimi,true,false,,1191,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"5624,n/a,""
+-,MiniMax-M2.5,alibaba-plan,anthropic-messages,mini,true,false,,1465,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"30ce,n/a,""
+-,qwen3-coder-plus,alibaba-plan,anthropic-messages,plus,false,false,,1132,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"1203,n/a,""
+-,qwen3-coder-next,alibaba-plan,anthropic-messages,(other),false,false,,1152,,,false,0,0,,error:402 payment,n/a,""
+-,qwen3-max-2026-01-23,alibaba-plan,anthropic-messages,max,true,false,,1122,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"83e5,n/a,""
+-,glm-4.7,alibaba-plan,anthropic-messages,glm,true,false,,334,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"3b8f,n/a,""
+-,deepseek-v3.2,alibaba-plan,openai-completions,(other),true,false,,663,,,false,0,0,,error:400 400 data: {"error":{"code":"invalid_para,n/a,""
+-,qwen3.6-35b-a3b,alibaba-cloud,anthropic-messages,(other),true,false,,1123,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,deepseek-v3.2,alibaba-cloud,openai-completions,(other),true,false,,304,,,false,0,0,,error:400 400 developer is not one of ['system', ',n/a,""
+-,qwen-plus-character,alibaba-cloud,anthropic-messages,plus,false,false,,396,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen-mt-lite,alibaba-cloud,anthropic-messages,lite,false,false,,342,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen-vl-ocr-2025-11-20,alibaba-cloud,anthropic-messages,(other),false,false,,326,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen-mt-flash,alibaba-cloud,anthropic-messages,flash,false,false,,380,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,ccai-pro,alibaba-cloud,anthropic-messages,pro,false,false,,339,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,tongyi-tingwu-slp,alibaba-cloud,anthropic-messages,(other),false,false,,328,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen2.5-7b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,318,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen2.5-14b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,320,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen2.5-32b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,335,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen2.5-72b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,337,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen2.5-14b-instruct-1m,alibaba-cloud,anthropic-messages,(other),false,false,,330,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen2.5-7b-instruct-1m,alibaba-cloud,anthropic-messages,(other),false,false,,328,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwq-plus-2025-03-05,alibaba-cloud,anthropic-messages,plus,true,false,,331,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen-mt-turbo,alibaba-cloud,anthropic-messages,turbo,false,false,,331,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen-mt-plus,alibaba-cloud,anthropic-messages,plus,false,false,,311,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen-coder-plus,alibaba-cloud,anthropic-messages,plus,false,false,,312,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwq-plus,alibaba-cloud,anthropic-messages,plus,true,false,,330,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen2.5-vl-32b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,328,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qvq-max,alibaba-cloud,anthropic-messages,max,true,false,,311,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-8b,alibaba-cloud,anthropic-messages,(other),false,false,,359,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-30b-a3b,alibaba-cloud,anthropic-messages,(other),false,false,,337,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-235b-a22b,alibaba-cloud,anthropic-messages,(other),false,false,,320,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-235b-a22b-instruct-2507,alibaba-cloud,anthropic-messages,(other),false,false,,309,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-235b-a22b-thinking-2507,alibaba-cloud,anthropic-messages,(other),true,false,,307,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-vl-235b-a22b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,378,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-vl-235b-a22b-thinking,alibaba-cloud,anthropic-messages,(other),true,false,,319,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-30b-a3b-thinking-2507,alibaba-cloud,anthropic-messages,(other),true,false,,331,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-30b-a3b-instruct-2507,alibaba-cloud,anthropic-messages,(other),false,false,,349,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-14b,alibaba-cloud,anthropic-messages,(other),false,false,,371,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-32b,alibaba-cloud,anthropic-messages,(other),false,false,,331,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-0.6b,alibaba-cloud,anthropic-messages,(other),false,false,,319,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-4b,alibaba-cloud,anthropic-messages,(other),false,false,,328,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-1.7b,alibaba-cloud,anthropic-messages,(other),false,false,,330,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-next-80b-a3b-thinking,alibaba-cloud,anthropic-messages,(other),true,false,,343,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen3-next-80b-a3b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,328,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
+-,qwen2-7b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,332,,,false,0,0,,error:400 400 event:error
+data:{"code":"InvalidPar,n/a,""
