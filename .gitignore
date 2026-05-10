@@ -2,3 +2,6 @@ node_modules/
 bench-results-*.csv
 bench-candidates.txt
 .DS_Store
+_tmp/
+banner.png
+banner-compressed.jpg

@@ -1,5 +1,7 @@
 # pi-bench
 
+![pi-bench banner](https://fcskjxapefiqdclrvbtw.supabase.co/storage/v1/object/public/assets/pi-packages/pi-bench-banner.jpg)
+
 Find the fastest, cheapest LLM models among all registered providers.
 
 Probes every available model with a real `stream()` call using a representative prompt, then ranks by latency, cost, and output quality. Designed to feed smart model selection into [pi-recap](https://github.com/fornace/pi-recap) and other pi extensions.

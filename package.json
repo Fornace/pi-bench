@@ -2,21 +2,38 @@
   "name": "pi-bench",
   "version": "0.2.1",
   "description": "Find the fastest, cheapest models among all registered providers. Probes every available model with a real stream() call and ranks by latency, cost, and quality. 30s hard timeout with incremental save.",
-  "license": "MIT",
   "author": "Francesco",
+  "license": "MIT",
+  "type": "module",
+  "homepage": "https://github.com/Fornace/pi-bench#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/fornace/pi-bench.git"
+    "url": "git+https://github.com/Fornace/pi-bench.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Fornace/pi-bench/issues"
   },
   "keywords": [
     "pi",
+    "pi-package",
+    "pi-extension",
     "pi-coding-agent",
-    "extension",
     "benchmark",
     "llm",
     "model-probe"
   ],
+  "files": [
+    "index.ts",
+    "bench.mts",
+    "README.md",
+    "LICENSE"
+  ],
   "main": "bench.mts",
+  "pi": {
+    "extensions": [
+      "index.ts"
+    ]
+  },
   "peerDependencies": {
     "@earendil-works/pi-ai": ">=0.74.0",
     "@earendil-works/pi-coding-agent": ">=0.74.0"
