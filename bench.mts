@@ -1,0 +1,504 @@
+/**
+ * Standalone LLM model benchmark probe.
+ *
+ * Loads pi extensions universally, probes all available models with a
+ * representative prompt, and ranks them by latency, cost, and quality.
+ *
+ * Usage:
+ *   # CLI:
+ *   npx -y -p tsx tsx bench.mts [--output-dir /path]
+ *
+ *   # Programmatic:
+ *   import { runBench } from "./bench.mts";
+ *   const { results, csvPath, candidatesPath } = await runBench();
+ */
+
+import * as os from "node:os";
+import * as fs from "node:fs";
+import * as path from "node:path";
+import { fileURLToPath } from "node:url";
+import { execSync } from "node:child_process";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+import type { Api, AssistantMessage, Model } from "@earendil-works/pi-ai";
+import { stream } from "@earendil-works/pi-ai";
+import { AuthStorage, ModelRegistry, discoverAndLoadExtensions } from "@earendil-works/pi-coding-agent";
+
+// ── tunables ───────────────────────────────────────────────────────────
+
+export const PER_CALL_TIMEOUT_MS = 4_000;
+export const TOTAL_RUN_TIMEOUT_MS = 30 * 1000;
+export const CONCURRENCY_PER_PROVIDER = 8;
+export const BATCH_GAP_MS = 200;
+
+const SYSTEM = `You write one-line recaps of user messages. Output a single sentence in past tense. Be specific. No preamble.`;
+const PROMPT = `I'm trying to debug why my Python script hangs after 30 iterations of an HTTPS API call. requests==2.28.1, timeouts already added.`;
+
+// ── types ──────────────────────────────────────────────────────────────
+
+export interface ProbeResult {
+	id: string;
+	provider: string;
+	api: string;
+	family: string;
+	reasoning: boolean;
+	costInput: number;
+	costOutput: number;
+	tFirstByte: number | null;
+	tComplete: number | null;
+	promptTokens: number | null;
+	outputTokens: number | null;
+	tokensEstimated: boolean;
+	costUSD: number | null;
+	status: string;
+	sample: string;
+	reasoned: boolean;
+	quality: string;
+}
+
+export interface Candidate {
+	model: Model<Api>;
+	family: string;
+	cheap: boolean;
+	totalCost: number;
+	hasThinkingOff: boolean;
+}
+
+export interface BenchStats {
+	starting: number;
+	dropped_blocklist: number;
+	dropped_ctx: number;
+	dropped_reasoning_no_thinking_off: number;
+	dropped_not_fast_not_cheap: number;
+	final: number;
+}
+
+export interface BenchResult {
+	results: ProbeResult[];
+	csvPath: string;
+	candidatesPath: string;
+	stats: BenchStats;
+	providerTimings: Map<string, { elapsed: number; count: number; ok: number; fail: number; timeout: number }>;
+}
+
+export interface BenchOpts {
+	outputDir?: string;
+	timeoutMs?: number;
+	concurrency?: number;
+}
+
+// ── filter ─────────────────────────────────────────────────────────────
+
+const ID_BLOCKLIST_FRAGMENTS: ReadonlyArray<{ frag: string; reason: string }> = [
+	{ frag: "embed", reason: "embeddings" },
+	{ frag: "audio", reason: "audio i/o" },
+	{ frag: "tts", reason: "text-to-speech" },
+	{ frag: "whisper", reason: "speech-to-text" },
+	{ frag: "transcribe", reason: "speech-to-text" },
+	{ frag: "dall-e", reason: "image gen" },
+	{ frag: "dalle", reason: "image gen" },
+	{ frag: "imagen", reason: "image gen" },
+	{ frag: "stable-diffusion", reason: "image gen" },
+	{ frag: "midjourney", reason: "image gen" },
+	{ frag: "moderation", reason: "classifier" },
+	{ frag: "guard", reason: "classifier" },
+];
+
+function familyMatch(id: string): string | null {
+	const lower = id.toLowerCase();
+	if (lower.includes("haiku")) return "haiku";
+	if (lower.includes("flash-lite") || lower.includes("flashlite")) return "flash-lite";
+	if (lower.includes("nano")) return "nano";
+	if (lower.includes("ministral")) return "ministral";
+	if (lower.includes("kimi")) return "kimi";
+	if (lower.includes("glm")) return "glm";
+	if (lower.includes("nova-lite") || lower.includes("nova-micro")) return "nova-lite";
+	if (lower.includes("flash")) return "flash";
+	if (lower.includes("mini") && !lower.includes("gemini")) return "mini";
+	if (lower.includes("turbo")) return "turbo";
+	if (lower.includes("lite")) return "lite";
+	if (lower.includes("plus")) return "plus";
+	if (lower.includes("max")) return "max";
+	if (lower.includes("-pro") || lower.includes("/pro")) return "pro";
+	return null;
+}
+
+const MIN_CTX = 1024;
+const CHEAP_THRESHOLD = 1.0;
+
+function thinkingOffOpts(model: Model<Api>): Record<string, unknown> {
+	switch (model.api) {
+		case "anthropic-messages":
+			return { thinkingEnabled: false };
+		case "google-generative-ai":
+		case "google-vertex":
+			return { thinking: { enabled: false } };
+		default:
+			return {};
+	}
+}
+
+function hasThinkingOffSupport(m: Model<Api>): boolean {
+	if (m.api === "anthropic-messages") return true;
+	if (m.api === "google-generative-ai" || m.api === "google-vertex") return true;
+	if (m.thinkingLevelMap) {
+		const map = m.thinkingLevelMap as Record<string, unknown>;
+		if ("none" in map || "off" in map || "minimal" in map || "low" in map) return true;
+	}
+	return false;
+}
+
+function filterCandidates(all: Model<Api>[]): { candidates: Candidate[]; stats: BenchStats; dropped: { id: string; reason: string }[] } {
+	const stats: BenchStats = { starting: all.length, dropped_blocklist: 0, dropped_ctx: 0, dropped_reasoning_no_thinking_off: 0, dropped_not_fast_not_cheap: 0, final: 0 };
+	const dropped: { id: string; reason: string }[] = [];
+	const candidates: Candidate[] = [];
+
+	for (const m of all) {
+		const lower = m.id.toLowerCase();
+		const blockHit = ID_BLOCKLIST_FRAGMENTS.find((b) => lower.includes(b.frag));
+		if (blockHit) {
+			stats.dropped_blocklist++;
+			dropped.push({ id: m.id, reason: `blocklist:${blockHit.frag}` });
+			continue;
+		}
+		const fam = familyMatch(m.id);
+		const total = (m.cost?.input ?? 0) + (m.cost?.output ?? 0);
+		const cheap = total > 0 && total < CHEAP_THRESHOLD;
+		candidates.push({ model: m, family: fam ?? "(other)", cheap, totalCost: total, hasThinkingOff: hasThinkingOffSupport(m) });
+	}
+
+	stats.final = candidates.length;
+	return { candidates, stats, dropped };
+}
+
+// ── quality classification ─────────────────────────────────────────────
+
+function classifyQuality(text: string): string {
+	const trimmed = text.trim();
+	if (!trimmed) return "empty";
+	const lower = trimmed.toLowerCase();
+	if (/^(i (cannot|can't|am unable|won't))|sorry,? i/.test(lower)) return "refusal";
+	if (trimmed.endsWith("?")) return "question";
+	const sentenceTerminators = (trimmed.match(/[.!?](?:\s|$)/g) ?? []).length;
+	if (sentenceTerminators > 1) return "multi-sentence";
+	if (trimmed.includes("```") || /^(recap|summary|answer)\s*:/i.test(trimmed)) return "formatted";
+	return "ok";
+}
+
+// ── probing ────────────────────────────────────────────────────────────
+
+async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number): Promise<ProbeResult> {
+	const m = c.model;
+	const base: ProbeResult = {
+		id: m.id, provider: m.provider, api: m.api, family: c.family, reasoning: m.reasoning,
+		costInput: m.cost?.input ?? 0, costOutput: m.cost?.output ?? 0,
+		tFirstByte: null, tComplete: null, promptTokens: null, outputTokens: null,
+		tokensEstimated: false, costUSD: null, status: "init", sample: "", reasoned: false, quality: "n/a",
+	};
+
+	const auth = await registry.getApiKeyAndHeaders(m);
+	if (!auth.ok) { base.status = `error:auth:${auth.error.slice(0, 60)}`; return base; }
+	if (!auth.apiKey) { base.status = "error:no-apikey"; return base; }
+
+	const t0 = performance.now();
+	let firstByteAt: number | null = null;
+	let running = "";
+	let finalMessage: AssistantMessage | undefined;
+	let timedOut = false;
+
+	const timeout = new Promise<"timeout">((resolve) => { setTimeout(() => { timedOut = true; resolve("timeout"); }, timeoutMs); });
+	const work = (async () => {
+		const events = stream(m, {
+			systemPrompt: SYSTEM,
+			messages: [{ role: "user", content: [{ type: "text", text: PROMPT }], timestamp: Date.now() }],
+		}, { apiKey: auth.apiKey!, headers: auth.headers || {}, maxTokens: 128, temperature: 0, ...thinkingOffOpts(m) });
+
+		for await (const event of events) {
+			if (timedOut) break;
+			if (event.type === "text_delta") {
+				if (firstByteAt === null) firstByteAt = performance.now();
+				running += event.delta;
+			} else if (event.type === "text_end") {
+				if (firstByteAt === null) firstByteAt = performance.now();
+				if (!running && typeof event.content === "string") running = event.content;
+			} else if (event.type === "thinking_data" || event.type === "thinking_start") {
+				base.reasoned = true;
+			} else if (event.type === "done") {
+				finalMessage = event.message;
+			} else if (event.type === "error") {
+				finalMessage = event.error;
+				const reason = event.error?.errorMessage ?? `stop=${event.error?.stopReason}`;
+				throw new Error(reason);
+			}
+		}
+		return "ok" as const;
+	})();
+
+	let raceResult: "ok" | "timeout" | Error;
+	try { raceResult = await Promise.race([work, timeout]) as any; } catch (err) { raceResult = err as Error; }
+
+	const tEnd = performance.now();
+	base.tComplete = Math.round(tEnd - t0);
+	base.tFirstByte = firstByteAt !== null ? Math.round(firstByteAt - t0) : null;
+
+	if (raceResult === "timeout") { base.status = "timeout"; base.sample = running.slice(0, 60); return base; }
+	if (raceResult instanceof Error) {
+		const msg = raceResult.message;
+		let short = msg;
+		const m402 = msg.match(/402[^"]*/); const m401 = msg.match(/401[^"]*/); const m429 = msg.match(/429[^"]*/); const m400 = msg.match(/400[^"]*/);
+		if (m402) short = `402 ${msg.includes("credit") ? "credits" : "payment"}`;
+		else if (m401) short = "401 auth";
+		else if (m429) short = "429 rate";
+		else if (m400) short = `400 ${msg.slice(0, 40)}`;
+		else short = msg.slice(0, 60);
+		base.status = `error:${short}`; base.sample = running.slice(0, 60); return base;
+	}
+
+	if (finalMessage?.usage) { base.promptTokens = finalMessage.usage.input ?? null; base.outputTokens = finalMessage.usage.output ?? null; base.tokensEstimated = false; }
+	if (!running && finalMessage) {
+		const parts: string[] = [];
+		for (const part of finalMessage.content ?? []) {
+			if (part && (part as any).type === "text" && typeof (part as any).text === "string") parts.push((part as any).text);
+		}
+		if (parts.length > 0) running = parts.join("");
+	}
+
+	if (!running.trim()) { base.status = "empty"; base.sample = ""; base.quality = "empty"; }
+	else { base.status = "ok"; base.sample = running.replace(/\s+/g, " ").trim().slice(0, 60); base.quality = classifyQuality(running); }
+
+	if (base.outputTokens === null) { base.outputTokens = Math.max(1, Math.round(running.length / 4)); base.tokensEstimated = true; }
+	if (base.promptTokens === null) { base.promptTokens = Math.round((SYSTEM.length + PROMPT.length) / 4); base.tokensEstimated = true; }
+	base.costUSD = ((base.promptTokens * (m.cost?.input ?? 0)) + (base.outputTokens * (m.cost?.output ?? 0))) / 1_000_000;
+	return base;
+}
+
+// ── concurrency runner ─────────────────────────────────────────────────
+
+async function runWithConcurrency<T, R>(
+	items: T[], limit: number, fn: (item: T, idx: number) => Promise<R>,
+	gapMs = 0, totalTimeoutMs = TOTAL_RUN_TIMEOUT_MS,
+	onResult?: (idx: number, result: R) => void,
+): Promise<R[]> {
+	const results: R[] = new Array(items.length);
+	let cursor = 0;
+	let aborted = false;
+
+	async function worker(): Promise<void> {
+		while (!aborted) {
+			const idx = cursor++;
+			if (idx >= items.length) return;
+			try { results[idx] = await fn(items[idx]!, idx); } catch (err) { results[idx] = err as any; }
+			onResult?.(idx, results[idx]!);
+			if (gapMs > 0) await new Promise((r) => setTimeout(r, gapMs));
+		}
+	}
+
+	const workers = Array.from({ length: limit }, () => worker());
+	const totalDeadline = new Promise<void>((resolve) => setTimeout(() => { aborted = true; resolve(); }, totalTimeoutMs));
+	await Promise.race([Promise.all(workers), totalDeadline]);
+	return results;
+}
+
+// ── output ─────────────────────────────────────────────────────────────
+
+function fmtMs(v: number | null): string { return v === null ? "-" : `${v}ms`; }
+function fmtUSD(v: number | null): string { return v === null ? "-" : v < 0.000001 ? "~$0" : `$${v.toFixed(6)}`; }
+function pad(s: string, w: number): string { return s.length >= w ? s.slice(0, w) : s + " ".repeat(w - s.length); }
+
+export function printTable(results: ProbeResult[]): string {
+	const ok = results.filter((r) => r.status === "ok").sort((a, b) => (a.tComplete ?? 99999) - (b.tComplete ?? 99999));
+	const fail = results.filter((r) => r.status !== "ok");
+	const lines: string[] = [];
+	lines.push(pad("RANK", 4) + " " + pad("FB", 7) + " " + pad("TOTAL", 7) + " " + pad("COST", 12) + " " + pad("TOK_O", 6) + " " + pad("FAMILY", 10) + " " + pad("PROVIDER", 18) + " " + pad("ID", 50) + " " + pad("RZN", 4) + " " + pad("QUALITY", 16) + " " + "STATUS / SAMPLE");
+	lines.push("-".repeat(180));
+	let i = 1;
+	for (const r of ok) {
+		lines.push(pad(String(i++), 4) + " " + pad(fmtMs(r.tFirstByte), 7) + " " + pad(fmtMs(r.tComplete), 7) + " " + pad(fmtUSD(r.costUSD), 12) + " " + pad(String(r.outputTokens ?? "-") + (r.tokensEstimated ? "~" : ""), 6) + " " + pad(r.family, 10) + " " + pad(r.provider, 18) + " " + pad(r.id, 50) + " " + pad(r.reasoned ? "yes" : "no", 4) + " " + pad(r.quality, 16) + " " + r.sample);
+	}
+	if (fail.length > 0) {
+		lines.push("-".repeat(180));
+		lines.push("FAILURES:");
+		for (const r of fail) {
+			lines.push(pad("-", 4) + " " + pad(fmtMs(r.tFirstByte), 7) + " " + pad(fmtMs(r.tComplete), 7) + " " + pad("-", 12) + " " + pad("-", 6) + " " + pad(r.family, 10) + " " + pad(r.provider, 18) + " " + pad(r.id, 50) + " " + pad(r.reasoned ? "yes" : "no", 4) + " " + pad(r.quality, 16) + " " + r.status);
+		}
+	}
+	return lines.join("\n");
+}
+
+function writeCsv(results: ProbeResult[], filePath: string): void {
+	const header = "rank,id,provider,api,family,reasoning,reasoned,t_first_byte_ms,t_complete_ms,prompt_tokens,output_tokens,tokens_estimated,cost_input,cost_output,cost_usd,status,quality,sample";
+	const ok = results.filter((r) => r.status === "ok").sort((a, b) => (a.tComplete ?? 99999) - (b.tComplete ?? 99999));
+	const fail = results.filter((r) => r.status !== "ok");
+	const sorted = [...ok, ...fail];
+	const lines = [header];
+	for (let i = 0; i < sorted.length; i++) {
+		const r = sorted[i]!;
+		const rank = r.status === "ok" ? String(i + 1) : "-";
+		const sample = (r.sample ?? "").replace(/"/g, '""');
+		lines.push([rank, r.id, r.provider, r.api, r.family, r.reasoning, r.reasoned, r.tFirstByte ?? "", r.tComplete ?? "", r.promptTokens ?? "", r.outputTokens ?? "", r.tokensEstimated, r.costInput, r.costOutput, r.costUSD ?? "", r.status, r.quality, `"${sample}"`].join(","));
+	}
+	fs.writeFileSync(filePath, lines.join("\n"));
+}
+
+function writeCandidatesCsv(candidates: Candidate[], dropped: { id: string; reason: string }[], filePath: string): void {
+	const lines: string[] = [];
+	lines.push("# CANDIDATES (passed filter)");
+	lines.push("id,provider,api,reasoning,has_thinking_off,cost_in,cost_out,total_cost,ctx,family,cheap");
+	for (const c of candidates) {
+		lines.push([c.model.id, c.model.provider, c.model.api, c.model.reasoning, c.hasThinkingOff, c.model.cost?.input ?? 0, c.model.cost?.output ?? 0, c.totalCost.toFixed(4), c.model.contextWindow ?? 0, c.family, c.cheap].join(","));
+	}
+	lines.push("");
+	lines.push("# DROPPED");
+	lines.push("id,reason");
+	for (const d of dropped) lines.push(`${d.id},"${d.reason}"`);
+	fs.writeFileSync(filePath, lines.join("\n"));
+}
+
+// ── main bench logic ───────────────────────────────────────────────────
+
+async function loadExtensions(registry: ModelRegistry) {
+	const agentDir = path.join(os.homedir(), ".pi/agent");
+	const settingsPath = path.join(agentDir, "settings.json");
+	const configuredPaths: string[] = [];
+
+	if (fs.existsSync(settingsPath)) {
+		const settings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
+		const packages: string[] = settings.packages ?? [];
+		const globalNpmRoot = execSync("npm root -g", { encoding: "utf8" }).trim();
+		for (const pkg of packages) {
+			if (pkg.startsWith("npm:")) {
+				const pkgName = pkg.slice(4);
+				const pkgPath = path.join(globalNpmRoot, pkgName);
+				if (fs.existsSync(pkgPath)) configuredPaths.push(pkgPath);
+			}
+		}
+	}
+
+	const { extensions, errors, runtime } = await discoverAndLoadExtensions(configuredPaths, process.cwd(), agentDir, undefined);
+	for (const err of errors) console.error(`[bench] extension error: ${err.path}: ${err.error}`);
+	console.log(`[bench] loaded ${extensions.length} extensions, ${errors.length} errors`);
+
+	for (const { name, config } of runtime.pendingProviderRegistrations) {
+		try { registry.registerProvider(name, config); } catch (err) { console.error(`[bench] failed to register provider ${name}:`, err instanceof Error ? err.message : String(err)); }
+	}
+	const nProviders = runtime.pendingProviderRegistrations.length;
+	runtime.pendingProviderRegistrations = [];
+	console.log(`[bench] registered ${nProviders} providers from extensions`);
+
+	const sessionHandlers: Array<() => Promise<void>> = [];
+	for (const ext of extensions) {
+		const handlers = ext.handlers.get("session_start");
+		if (handlers) sessionHandlers.push(...handlers);
+	}
+	if (sessionHandlers.length > 0) {
+		console.log(`[bench] firing ${sessionHandlers.length} session_start handlers...`);
+		const tStart = performance.now();
+		await Promise.race([Promise.allSettled(sessionHandlers.map((h) => h())), new Promise<void>((resolve) => setTimeout(resolve, 15_000))]);
+		const elapsed = Math.round((performance.now() - tStart) / 1000);
+		console.log(`[bench] session_start handlers settled in ${elapsed}s`);
+	}
+}
+
+export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
+	const outputDir = opts.outputDir ?? __dirname;
+	const timeoutMs = opts.timeoutMs ?? TOTAL_RUN_TIMEOUT_MS;
+	const concurrency = opts.concurrency ?? CONCURRENCY_PER_PROVIDER;
+
+	console.log("[bench] loading registry...");
+	const authStorage = AuthStorage.create();
+	const registry = ModelRegistry.create(authStorage);
+	await loadExtensions(registry);
+
+	const all = registry.getAll();
+	const available = registry.getAvailable();
+	console.log(`[bench] registry: total=${all.length} available=${available.length}`);
+
+	const { candidates, stats, dropped } = filterCandidates(available);
+	console.log(`[bench] filter: starting=${stats.starting} final=${stats.final}`);
+
+	const candidatesPath = path.join(outputDir, "bench-candidates.txt");
+	writeCandidatesCsv(candidates, dropped, candidatesPath);
+	console.log(`[bench] wrote ${candidatesPath}`);
+
+	// Group by provider
+	const byProvider = new Map<string, Candidate[]>();
+	for (const c of candidates) {
+		const bucket = byProvider.get(c.model.provider) ?? [];
+		bucket.push(c);
+		byProvider.set(c.model.provider, bucket);
+	}
+	console.log(`[bench] probing ${candidates.length} candidates across ${byProvider.size} providers (concurrency=${concurrency}/provider), per-call timeout=${PER_CALL_TIMEOUT_MS}ms...`);
+
+	const csvFile = path.join(outputDir, "bench-results-v6.csv");
+	const t0 = performance.now();
+	const results: ProbeResult[] = new Array(candidates.length);
+	const providerTimings = new Map<string, { start: number; end: number; count: number; ok: number; fail: number; timeout: number }>();
+
+	// Run all providers in parallel
+	let globalCursor = 0;
+	const providerPromises: Promise<void>[] = [];
+	for (const [provider, group] of byProvider) {
+		const startIdx = globalCursor;
+		const timing = { start: performance.now(), end: 0, count: group.length, ok: 0, fail: 0, timeout: 0 };
+		providerTimings.set(provider, timing);
+		providerPromises.push(
+			runWithConcurrency(group, concurrency, async (c, idx) => {
+				const r = await probeOne(registry, c, PER_CALL_TIMEOUT_MS);
+				const tag = r.status === "ok" ? `${r.tComplete}ms ${r.outputTokens}tok q=${r.quality}` : r.status;
+				const globalIdx = startIdx + idx;
+				results[globalIdx] = r;
+				console.log(`[bench] [${provider}] ${c.model.id.padEnd(45)} -> ${tag}`);
+				return r;
+			}, BATCH_GAP_MS, timeoutMs, (idx, r) => {
+				if (r.status === "ok") timing.ok++;
+				else if (r.status === "timeout") timing.timeout++;
+				else timing.fail++;
+				const filledResults = results.filter(Boolean);
+				writeCsv(filledResults, csvFile);
+			}).then(() => { timing.end = performance.now(); })
+		);
+		globalCursor += group.length;
+	}
+	await Promise.all(providerPromises);
+
+	const dur = Math.round((performance.now() - t0) / 1000);
+	console.log(`[bench] probes done in ${dur}s`);
+
+	// Per-provider timing
+	console.log("\n[bench] provider timings:");
+	const sortedProviders = [...providerTimings.entries()].sort((a, b) => (b[1].end - b[1].start) - (a[1].end - a[1].start));
+	const finalProviderTimings = new Map<string, { elapsed: number; count: number; ok: number; fail: number; timeout: number }>();
+	for (const [provider, t] of sortedProviders) {
+		const elapsed = Math.round((t.end - t.start) / 1000);
+		console.log(`  ${provider.padEnd(18)} ${elapsed}s  (${t.count} models: ${t.ok} ok, ${t.fail} err, ${t.timeout} timeout)`);
+		finalProviderTimings.set(provider, { elapsed, count: t.count, ok: t.ok, fail: t.fail, timeout: t.timeout });
+	}
+
+	const table = printTable(results);
+	console.log("");
+	console.log(table);
+
+	writeCsv(results, csvFile);
+	console.log(`\n[bench] wrote ${csvFile}`);
+
+	return { results, csvPath: csvFile, candidatesPath, stats, providerTimings: finalProviderTimings };
+}
+
+// ── CLI entry point ────────────────────────────────────────────────────
+
+async function main() {
+	// Parse --output-dir from argv
+	let outputDir: string | undefined;
+	for (let i = 2; i < process.argv.length; i++) {
+		if (process.argv[i] === "--output-dir" && process.argv[i + 1]) {
+			outputDir = process.argv[++i];
+		}
+	}
+	await runBench({ outputDir });
+}
+
+// Run CLI if invoked directly
+if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("bench.mts")) {
+	main().catch((err) => { console.error("[bench] FATAL:", err); process.exit(1); });
+}
