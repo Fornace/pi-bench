@@ -91,6 +91,7 @@ export interface ProbeResult {
 	sample: string;
 	reasoned: boolean;
 	quality: string;
+	promptUsed: string;
 }
 
 export interface Candidate {
@@ -230,10 +231,15 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 		id: m.id, provider: m.provider, api: m.api, family: c.family, reasoning: m.reasoning,
 		costInput: m.cost?.input ?? 0, costOutput: m.cost?.output ?? 0,
 		tFirstByte: null, tComplete: null, promptTokens: null, outputTokens: null,
-		tokensEstimated: false, costUSD: null, status: "init", sample: "", reasoned: false, quality: "n/a",
+		tokensEstimated: false, costUSD: null, status: "init", sample: "", reasoned: false, quality: "n/a", promptUsed: "",
 	};
 
 	const auth = await registry.getApiKeyAndHeaders(m);
+
+	// Generate the prompt once so the same text is used for the API call
+	// and for token estimation.
+	const promptText = PROMPT();
+	base.promptUsed = promptText;
 	if (!auth.ok) { base.status = `error:auth:${auth.error.slice(0, 60)}`; return base; }
 	if (!auth.apiKey) { base.status = "error:no-apikey"; return base; }
 
@@ -247,7 +253,7 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 	const work = (async () => {
 		const events = stream(m, {
 			systemPrompt: SYSTEM,
-			messages: [{ role: "user", content: [{ type: "text", text: PROMPT() }], timestamp: Date.now() }],
+			messages: [{ role: "user", content: [{ type: "text", text: promptText }], timestamp: Date.now() }],
 		}, { apiKey: auth.apiKey!, headers: auth.headers || {}, maxTokens: 128, temperature: 0, ...thinkingOffOpts(m) });
 
 		for await (const event of events) {
@@ -304,7 +310,7 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 	else { base.status = "ok"; base.sample = running.replace(/\s+/g, " ").trim().slice(0, 60); base.quality = classifyQuality(running); }
 
 	if (base.outputTokens === null) { base.outputTokens = Math.max(1, Math.round(running.length / 4)); base.tokensEstimated = true; }
-	if (base.promptTokens === null) { base.promptTokens = Math.round((SYSTEM.length + PROMPT().length) / 4); base.tokensEstimated = true; }
+	if (base.promptTokens === null) { base.promptTokens = Math.round((SYSTEM.length + promptText.length) / 4); base.tokensEstimated = true; }
 	base.costUSD = ((base.promptTokens * (m.cost?.input ?? 0)) + (base.outputTokens * (m.cost?.output ?? 0))) / 1_000_000;
 	return base;
 }
@@ -478,6 +484,12 @@ export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 	const timeoutMs = opts.timeoutMs ?? TOTAL_RUN_TIMEOUT_MS;
 	const concurrency = opts.concurrency ?? CONCURRENCY_PER_PROVIDER;
 
+	console.log("");
+	console.log("╔══════════════════════════════════════════════════════════╗");
+	console.log("║              🔬  pi-bench  v0.2.2  —  model probe      ║");
+	console.log("║  randomised prompts · per-call 4s · total 30s · q8     ║");
+	console.log("╚══════════════════════════════════════════════════════════╝");
+	console.log("");
 	console.log("[bench] loading registry...");
 	const authStorage = AuthStorage.create();
 	const registry = ModelRegistry.create(authStorage);
@@ -521,7 +533,9 @@ export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 				const tag = r.status === "ok" ? `${r.tComplete}ms ${r.outputTokens}tok q=${r.quality}` : r.status;
 				const globalIdx = startIdx + idx;
 				results[globalIdx] = r;
-				console.log(`[bench] [${provider}] ${c.model.id.padEnd(45)} -> ${tag}`);
+				// Show a prompt snippet so the user can see randomisation working.
+				const promptSnip = r.promptUsed ? `[${r.promptUsed.slice(0, 20)}…]` : "";
+				console.log(`[bench] [${provider}] ${c.model.id.padEnd(45)} -> ${tag} ${promptSnip}`);
 				return r;
 			}, BATCH_GAP_MS, timeoutMs, (idx, r) => {
 				if (r.status === "ok") timing.ok++;
