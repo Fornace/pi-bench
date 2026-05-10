@@ -306,6 +306,43 @@ function fmtMs(v: number | null): string { return v === null ? "-" : `${v}ms`; }
 function fmtUSD(v: number | null): string { return v === null ? "-" : v < 0.000001 ? "~$0" : `$${v.toFixed(6)}`; }
 function pad(s: string, w: number): string { return s.length >= w ? s.slice(0, w) : s + " ".repeat(w - s.length); }
 
+// ── curated data (consumed by pi-recap) ────────────────────────────────
+//
+// CURATED_CHAIN: hand-picked ordered list of fast/cheap recap candidates.
+// Top-to-bottom: fastest + cheapest first per the latest bench.
+// Some entries are stubs for OTHER users (different provider keys); they
+// only resolve if registry.getAvailable() returns them.
+
+export const CURATED_CHAIN: ReadonlyArray<string> = [
+	"gemini-2.5-flash-lite",                // google-vertex (bench rank 1, 460ms)
+	"MiniMaxAI/MiniMax-M2.5",               // huggingface (bench rank 2, 720ms)
+	"gemini-2.5-flash",                     // google-vertex (bench rank 3, 775ms)
+	"claude-haiku-4.5",                     // anthropic
+	"gpt-5-mini",                           // openai
+	"kimi-for-coding",                      // kimi-coding (bench rank 6, 1623ms)
+	"moonshotai/Kimi-K2-Instruct",          // huggingface (bench rank 9, 1858ms)
+];
+
+// BLACKLIST_SEED: known-bad models discovered during benching.
+// Bootstrapped once into pi-recap's blacklist.json on first load.
+
+export const BLACKLIST_SEED: ReadonlyArray<{ id: string; reason: string }> = [
+	{ id: "gemini-1.5-flash", reason: "404 endpoint retired" },
+	{ id: "gemini-1.5-flash-8b", reason: "404 endpoint retired" },
+	{ id: "gemini-2.0-flash", reason: "404 endpoint retired" },
+	{ id: "gemini-2.0-flash-lite", reason: "404 endpoint retired" },
+	{ id: "gemini-2.5-flash-lite-preview-09-2025", reason: "404 preview decommissioned" },
+	{ id: "moonshotai/Kimi-K2-Thinking", reason: "empty + reasoning" },
+	{ id: "zai-org/GLM-4.7-Flash", reason: "empty + reasoning" },
+	{ id: "moonshotai/Kimi-K2.6", reason: "empty + reasoning" },
+	{ id: "moonshotai/Kimi-K2-Instruct-0905", reason: "empty + reasoning" },
+	{ id: "zai-org/GLM-4.7", reason: "400 status code" },
+	{ id: "zai-org/GLM-5.1", reason: "empty + reasoning" },
+	{ id: "nvidia/nemotron-nano-9b-v2:free", reason: "empty + reasoning" },
+	{ id: "nvidia/nemotron-nano-12b-v2-vl:free", reason: "empty + reasoning" },
+	{ id: "deepseek-ai/DeepSeek-V3.2", reason: "empty + reasoning" },
+];
+
 export function printTable(results: ProbeResult[]): string {
 	const ok = results.filter((r) => r.status === "ok").sort((a, b) => (a.tComplete ?? 99999) - (b.tComplete ?? 99999));
 	const fail = results.filter((r) => r.status !== "ok");
