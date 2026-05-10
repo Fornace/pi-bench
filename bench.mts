@@ -36,18 +36,20 @@ const SYSTEM = `You write one-line recaps of user messages. Output a single sent
 
 // Word pools for randomised prompts so providers can't cache responses.
 // Each probe gets a unique prompt assembled from shuffled fragments.
+// Prompts are ~500 chars to match real recap workload (not short probes).
 const PROMPT_TEMPLATES = [
-	"I'm trying to debug why my {lang} script hangs after {n} iterations of an HTTPS API call. {pkg}, timeouts already added.",
-	"Need help refactoring a {lang} {thing} that's grown to {n} lines. It calls {api} in a loop.",
-	"My {lang} service returns {n} records but the response takes too long. Using {pkg}.",
-	"Writing a {lang} script to process {n} rows from a CSV. Memory keeps growing.",
-	"The {lang} {thing} crashes on iteration {n} with a timeout error. Already set retries.",
+	"I'm trying to debug why my {lang} script hangs after {n} iterations of an HTTPS API call. {pkg}, timeouts already added. The script reads from a config file, authenticates via OAuth2, then loops through a list of {n} endpoints. Each call should return within 200ms but after about 30 iterations the whole thing freezes. No error messages, no stack traces — it just stops. I've added logging before and after each request but the logs don't show where it's getting stuck. Memory usage stays flat so it's not a leak. I'm wondering if it's a connection pool issue or rate limiting on the {api} side.",
+	"Need help refactoring a {lang} {thing} that's grown to {n} lines over the past six months. It started as a simple script to sync data between our internal DB and the {api} API, but now it handles auth retries, pagination, webhook callbacks, error reporting, and a scheduling system bolted on top. Every time I touch one part something else breaks. I want to split it into smaller focused modules but I'm not sure where to draw the boundaries. The current version calls {api} in a loop with {pkg} and processes each response inline, which makes it hard to test individual pieces.",
+	"My {lang} service returns {n} records from a PostgreSQL query but the HTTP response takes 8-12 seconds. Using {pkg} for the client and {api} for the downstream enrichment calls. The query itself runs in 200ms — I've verified with EXPLAIN ANALYZE. The bottleneck is in the serialization layer: each record gets enriched with a separate API call, then transformed into a JSON response. I've tried batching the enrichment calls but the {api} API doesn't support bulk operations. Considering adding a Redis cache layer but I'm worried about stale data.",
+	"Writing a {lang} script to process {n} rows from a CSV export. Each row has an email, a name, and a subscription status. The script needs to validate emails, look up existing records in the {api} CRM via {pkg}, update mismatches, and send a summary report. Memory keeps growing — starts at 40MB and hits 1.2GB by row 500. I'm streaming the CSV with a generator so it shouldn't be loading everything into memory. I suspect the {api} client is caching responses or holding onto connections. Tried forcing garbage collection but it barely helps.",
+	"The {lang} {thing} crashes on iteration {n} with a timeout error. Already set retries to 3 with exponential backoff, added circuit breaker logic, and confirmed the {api} API is healthy during the crash window. Using {pkg} as the HTTP client. The weird part is it's always around the same iteration count — not exactly {n}, but between {n} and {n2}. The stack trace points to the connection pool manager. I've tried increasing pool size, reducing keep-alive timeout, and switching to a fresh client per request. Nothing changes the pattern.",
 ];
 const LANGS = ["Python", "Node.js", "Go", "Rust", "Ruby", "TypeScript"];
 const THINGS = ["endpoint", "worker", "migration", "scraper", "pipeline", "scheduler"];
 const PKGS = ["requests==2.28.1", "axios@1.4", "httpx", "fetch", "got", "urllib3"];
 const APIS = ["Stripe", "GitHub", "OpenAI", "AWS", "Cloudflare", "Vercel"];
 const NS = ["30", "50", "100", "200", "500", "1000"];
+const N2S = ["35", "55", "110", "220", "550", "1100"];
 
 function shuffle<T>(arr: T[]): T[] {
 	const a = [...arr];
@@ -65,7 +67,8 @@ function randomPrompt(): string {
 		.replace("{thing}", shuffle(THINGS)[0]!)
 		.replace("{pkg}", shuffle(PKGS)[0]!)
 		.replace("{api}", shuffle(APIS)[0]!)
-		.replace("{n}", shuffle(NS)[0]!);
+		.replace("{n}", shuffle(NS)[0]!)
+		.replace("{n2}", shuffle(N2S)[0]!);
 }
 
 // PROMPT is generated fresh for each probe to defeat response caching.
