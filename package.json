@@ -1,6 +1,6 @@
 {
   "name": "pi-bench",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "Find the fastest, cheapest models among all registered providers. Probes every available model with a real stream() call and ranks by latency, cost, and quality. 30s hard timeout with incremental save.",
   "author": "Francesco",
   "license": "MIT",
