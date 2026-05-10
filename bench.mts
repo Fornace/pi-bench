@@ -222,7 +222,7 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 			} else if (event.type === "text_end") {
 				if (firstByteAt === null) firstByteAt = performance.now();
 				if (!running && typeof event.content === "string") running = event.content;
-			} else if (event.type === "thinking_data" || event.type === "thinking_start") {
+			} else if (event.type === "thinking_start") {
 				base.reasoned = true;
 			} else if (event.type === "done") {
 				finalMessage = event.message;
@@ -423,7 +423,7 @@ async function loadExtensions(registry: ModelRegistry) {
 	runtime.pendingProviderRegistrations = [];
 	console.log(`[bench] registered ${nProviders} providers from extensions`);
 
-	const sessionHandlers: Array<() => Promise<void>> = [];
+	const sessionHandlers: Array<() => Promise<unknown>> = [];
 	for (const ext of extensions) {
 		const handlers = ext.handlers.get("session_start");
 		if (handlers) sessionHandlers.push(...handlers);
