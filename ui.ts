@@ -40,20 +40,18 @@ export async function showBenchmarkUI(
 	const padR = (s: string, w: number) => s.padEnd(w);
 	const padL = (s: string, w: number) => s.padStart(w);
 
-	const bold = (s: string) => `\x1b[1m${s}\x1b[0m`;
-	const dim = (s: string) => `\x1b[2m${s}\x1b[0m`;
-	const green = (s: string) => `\x1b[32m${s}\x1b[0m`;
-	const yellow = (s: string) => `\x1b[33m${s}\x1b[0m`;
-
 	const fmtCost = (raw: string): string => {
 		const n = parseFloat(raw);
-		if (isNaN(n) || n === 0) return dim("-");
+		if (isNaN(n) || n === 0) return "-";
 		if (n < 0.0001) return `$${n.toFixed(7)}`;
 		if (n < 0.01) return `$${n.toFixed(6)}`;
 		if (n < 1) return `$${n.toFixed(5)}`;
 		return `$${n.toFixed(3)}`;
 	};
 
+	// Labels MUST be plain text — no ANSI codes.
+	// SelectList applies its own rendering; pre-formatted text
+	// causes escape-code nesting that garbles the display.
 	const pickOptions = allRows.map((line, i) => {
 		const v = line.split(",");
 		const id = v[idxId]!.slice(0, idW);
@@ -65,21 +63,10 @@ export async function showBenchmarkUI(
 		const reasoned = v[idxReasoned] === "yes" ? " 🧠" : "";
 
 		const rank = String(i + 1).padStart(3);
-
-		let row: string;
-		if (i === 0) {
-			row = bold(green(`👑 ${padR(id, idW)} ${padR(prov, provW)} ${padL(lat + "ms", latW)} ${padL(cost, costW)} ${padL(tok, tokW)} ${qual}${reasoned}`));
-		} else if (i < 3) {
-			row = yellow(`${rank} ${padR(id, idW)} ${padR(prov, provW)} ${padL(lat + "ms", latW)} ${padL(cost, costW)} ${padL(tok, tokW)} ${qual}${reasoned}`);
-		} else if (i < 10) {
-			row = `${rank} ${padR(id, idW)} ${padR(prov, provW)} ${padL(lat + "ms", latW)} ${padL(cost, costW)} ${padL(tok, tokW)} ${qual}${reasoned}`;
-		} else {
-			row = dim(`${rank} ${padR(id, idW)} ${padR(prov, provW)} ${padL(lat + "ms", latW)} ${padL(cost, costW)} ${padL(tok, tokW)} ${qual}${reasoned}`);
-		}
-		return row;
+		const prefix = i === 0 ? "👑" : rank;
+		return `${prefix} ${padR(id, idW)} ${padR(prov, provW)} ${padL(lat + "ms", latW)} ${padL(cost, costW)} ${padL(tok, tokW)} ${qual}${reasoned}`;
 	});
 
-	const colHeader = dim(`     ${padR("model", idW)} ${padR("provider", provW)} ${padL("latency", latW)} ${padL("cost", costW)} ${padL("tok", tokW)} quality`);
 
 	return await ctx.ui.custom<string | undefined>((tui, theme, keybindings, done) => {
 		class CustomSelect extends Container {
@@ -91,6 +78,7 @@ export async function showBenchmarkUI(
 				this.addChild(new Spacer(1));
 				this.addChild(new Text(theme.fg("accent", theme.bold(title)) + " " + theme.fg("dim", `(${allRows.length} tested)`), 1, 0));
 				this.addChild(new Spacer(1));
+				const colHeader = theme.fg("dim", `     ${padR("model", idW)} ${padR("provider", provW)} ${padL("latency", latW)} ${padL("cost", costW)} ${padL("tok", tokW)} quality`);
 				this.addChild(new Text(colHeader, 1, 0));
 
 				const items = pickOptions.map((opt, i) => {
@@ -101,7 +89,7 @@ export async function showBenchmarkUI(
 				
 				this.list = new SelectList(items, 10, {
 					selectedPrefix: () => theme.fg("accent", "→ "),
-					selectedText: (t) => t, 
+					selectedText: (t) => theme.bold(theme.fg("accent", t)),
 					description: (t) => theme.fg("dim", t),
 					scrollInfo: (t) => theme.fg("dim", t),
 					noMatch: (t) => theme.fg("error", t)

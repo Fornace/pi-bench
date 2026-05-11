@@ -1,7 +1,7 @@
 {
   "name": "pi-bench",
   "version": "0.2.3",
-  "description": "Find the fastest, cheapest models among all registered providers. Probes every available model with a real stream() call and ranks by latency, cost, and quality. 30s hard timeout with incremental save.",
+  "description": "LLM benchmark toolkit for pi coding agent. Probes every available model with real streaming API calls and ranks by latency, cost, and output quality. Provides curated model chain and blacklist for smart model selection in pi-recap and other extensions.",
   "license": "MIT",
   "author": "Francesco",
   "repository": {
@@ -10,11 +10,20 @@
   },
   "keywords": [
     "pi",
+    "pi-package",
+    "pi-extension",
     "pi-coding-agent",
-    "extension",
     "benchmark",
     "llm",
-    "model-probe"
+    "llm-benchmark",
+    "model-probe",
+    "latency",
+    "model-selection",
+    "fastest-model",
+    "cheapest-model",
+    "streaming",
+    "time-to-first-token",
+    "headless"
   ],
   "main": "bench.mts",
   "exports": {

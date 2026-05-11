@@ -1,227 +1,225 @@
 rank,id,provider,api,family,reasoning,reasoned,t_first_byte_ms,t_complete_ms,prompt_tokens,output_tokens,tokens_estimated,cost_input,cost_output,cost_usd,status,quality,sample
-1,meta/llama-4-maverick-17b-128e-instruct,nvidia-nim,openai-completions,(other),false,false,326,681,150,30,false,0,0,0,ok,ok,"The Python worker crashed on iteration 50 with a timeout err"
-2,qwen-vl-plus-latest,alibaba-cloud,anthropic-messages,plus,false,false,475,739,176,37,false,0,0,0,ok,ok,"Debugging a Rust script that hangs after 30 HTTPS API calls,"
-3,qwen-vl-plus,alibaba-cloud,anthropic-messages,plus,false,false,453,764,153,39,false,0,0,0,ok,ok,"The Go migration crashed on iteration 200 due to a timeout e"
-4,qwen-plus-2025-09-11,alibaba-cloud,anthropic-messages,plus,false,false,542,836,161,46,false,0,0,0,ok,ok,"The user struggled to refactor a bloated 200-line Node.js en"
-5,qwen3.5-35b-a3b,alibaba-cloud,anthropic-messages,(other),true,false,565,844,187,33,false,0,0,0,ok,ok,"The user described a Rust script that hangs after approximat"
-6,qwen3.5-flash-2026-02-23,alibaba-cloud,anthropic-messages,flash,true,false,508,846,157,34,false,0,0,0,ok,ok,"The user reported that a Node.js scheduler consistently cras"
-7,qwen3.5-122b-a10b,alibaba-cloud,anthropic-messages,(other),true,false,499,864,163,48,false,0,0,0,ok,ok,"The user described a 200-line Ruby worker that evolved from "
-8,qwen-vl-plus-2025-05-07,alibaba-cloud,anthropic-messages,plus,false,false,482,882,174,35,false,0,0,0,ok,ok,"You added logging but couldn't pinpoint where the TypeScript"
-9,qwen-flash-character,alibaba-cloud,anthropic-messages,flash,false,false,510,900,157,71,false,0,0,0,ok,question,"Sounds like you have a great query optimizer working for you"
-10,qwen-turbo-2024-11-01,alibaba-cloud,anthropic-messages,turbo,false,false,482,965,159,53,false,0,0,0,ok,ok,"The user sought assistance in restructuring a complex 30-lin"
-11,qwen3-vl-flash,alibaba-cloud,anthropic-messages,flash,false,false,559,970,155,60,false,0,0,0,ok,ok,"The service’s 8–12 second HTTP response latency stems from s"
-12,qwen-turbo,alibaba-cloud,anthropic-messages,turbo,false,false,531,1009,161,33,false,0,0,0,ok,ok,"The Rust pipeline crashes on iteration 30 with a timeout err"
-13,qwen3-vl-flash-2026-01-22,alibaba-cloud,anthropic-messages,flash,false,false,601,1014,158,62,false,0,0,0,ok,ok,"The Python pipeline consistently crashed on iteration 200 wi"
-14,qwen-turbo-latest,alibaba-cloud,anthropic-messages,turbo,false,false,500,1020,166,40,false,0,0,0,ok,ok,"You need to refactor a 200-line Python endpoint by splitting"
-15,qwen-vl-plus-2025-01-25,alibaba-cloud,anthropic-messages,plus,false,false,523,1046,161,43,false,0,0,0,ok,ok,"The Python script processed data efficiently using generator"
-16,qwen-turbo-2025-04-28,alibaba-cloud,anthropic-messages,turbo,false,false,461,1051,158,45,false,0,0,0,ok,ok,"The Node.js scheduler crashes on iteration 30 due to a timeo"
-17,qwen3.5-flash,alibaba-cloud,anthropic-messages,flash,true,false,531,1053,161,38,false,0,0,0,ok,ok,"The user identified serialization and sequential downstream "
-18,qwen3-vl-flash-2025-10-15,alibaba-cloud,anthropic-messages,flash,false,false,609,1058,160,72,false,0,0,0,ok,ok,"The user’s 1000-line Python worker, originally a simple Stri"
-19,qwen3.5-27b,alibaba-cloud,anthropic-messages,(other),true,false,586,1110,167,48,false,0,0,0,ok,ok,"You wrote a Python script to process 100 CSV rows by validat"
-20,qwen3-coder-next,alibaba-cloud,anthropic-messages,(other),false,false,850,1133,154,34,false,0,0,0,ok,ok,"The HTTP response latency stemmed from 50 sequential, unbatc"
-21,qwen-plus-2025-04-28,alibaba-cloud,anthropic-messages,plus,false,false,548,1137,165,40,false,0,0,0,ok,ok,"The user refactored a bloated Node.js migration script by sp"
-22,qwen-max,alibaba-cloud,anthropic-messages,max,true,false,544,1138,179,39,false,0,0,0,ok,ok,"The user described a Go script that hangs after about 30 ite"
-23,qwen-max-latest,alibaba-cloud,anthropic-messages,max,true,false,569,1174,157,24,false,0,0,0,ok,ok,"User diagnosed a serialization bottleneck in their TypeScrip"
-24,qwen-plus-2025-12-01,alibaba-cloud,anthropic-messages,plus,false,false,613,1176,175,32,false,0,0,0,ok,ok,"The Rust script hung after ~30 HTTPS API calls due to an unh"
-25,gemini-3-flash-preview,google-vertex,google-vertex,flash,true,false,1034,1214,152,28,false,0.5,3,0.00016,ok,ok,"The user described a Python script for processing CSV data a"
-26,meta/llama-3.3-70b-instruct,nvidia-nim,openai-completions,(other),false,false,351,1225,192,43,false,0,0,0,ok,ok,"The user attempted to debug their Go script, which hung afte"
-27,qwen-plus-2025-01-25,alibaba-cloud,anthropic-messages,plus,false,false,502,1235,175,40,false,0,0,0,ok,ok,"The user debugged a Go script that hung after 50 HTTPS API c"
-28,qwen3-coder-flash,alibaba-cloud,anthropic-messages,flash,false,false,949,1241,174,28,false,0,0,0,ok,ok,"User's Go script hung after 500 HTTPS API calls due to conne"
-29,Qwen/Qwen3-Coder-480B-A35B-Instruct,huggingface,openai-completions,(other),false,false,896,1283,0,0,false,2,2,0,ok,ok,"The user's TypeScript service experiences slow HTTP response"
-30,mistralai/mistral-nemotron,nvidia-nim,openai-completions,(other),false,false,394,1507,157,58,false,0,0,0,ok,ok,"The user requested guidance on refactoring a 500-line Go scr"
-31,Qwen/Qwen3-Next-80B-A3B-Instruct,huggingface,openai-completions,(other),false,false,1092,1556,157,25,false,0.25,1,0.00006425,ok,ok,"The Rust service bottlenecked on 1000 sequential HTTP enrich"
-32,qwen-flash,alibaba-cloud,anthropic-messages,flash,false,false,456,1557,156,41,false,0,0,0,ok,ok,"The Node.js migration consistently crashes between iteration"
-33,qwen-plus-2025-07-14,alibaba-cloud,anthropic-messages,plus,false,false,628,1609,163,66,false,0,0,0,ok,ok,"Wrote a Rust script to process 1,000 CSV rows with email val"
-34,qwen3-vl-plus-2025-09-23,alibaba-cloud,anthropic-messages,plus,false,false,602,1617,154,43,false,0,0,0,ok,ok,"The Rust endpoint consistently crashed around iteration 100–"
-35,qwen3-vl-plus,alibaba-cloud,anthropic-messages,plus,false,false,546,1640,159,62,false,0,0,0,ok,ok,"Refactored the monolithic 200-line Ruby scraper into modular"
-36,nvidia/llama-3.3-nemotron-super-49b-v1,nvidia-nim,openai-completions,(other),true,false,291,1671,160,41,false,0,0,0,ok,ok,"You refactored a bloated Node.js endpoint, originally a simp"
-37,openai/gpt-oss-120b,nvidia-nim,openai-completions,(other),false,true,1330,1685,209,128,false,0,0,0,ok,ok,"The user reported that their TypeScript service fetched 50 P"
-38,qwen-plus,alibaba-cloud,anthropic-messages,plus,false,false,565,1739,159,66,false,0,0,0,ok,ok,"The user sought help refactoring a 500-line Rust scheduler—o"
-39,qwen-vl-max-2025-04-08,alibaba-cloud,anthropic-messages,max,true,false,544,1758,170,43,false,0,0,0,ok,ok,"The user described troubleshooting a Rust script that proces"
-40,qwen-plus-latest,alibaba-cloud,anthropic-messages,plus,false,false,754,1774,158,55,false,0,0,0,ok,ok,"The TypeScript worker consistently crashed around iterations"
-41,qwen3.5-397b-a17b,alibaba-cloud,anthropic-messages,(other),true,false,979,1780,166,42,false,0,0,0,ok,ok,"The user described a Python script that processes CSV rows a"
-42,Qwen/Qwen3-Coder-Next,huggingface,openai-completions,(other),false,false,1514,1801,153,42,false,0.2,1.5,0.0000936,ok,ok,"The Go migration consistently crashes around iteration 30–55"
-43,qwen3.5-plus-2026-02-15,alibaba-cloud,anthropic-messages,plus,true,false,1094,1835,169,32,false,0,0,0,ok,ok,"The user described a Go script processing CSV data that suff"
-44,qwen3.6-flash,alibaba-cloud,anthropic-messages,flash,true,false,1535,1858,164,40,false,0,0,0,ok,ok,"The user sought guidance on refactoring a 50-line Python end"
-45,qwen3-coder-plus-2025-07-22,alibaba-cloud,anthropic-messages,plus,false,false,1108,1899,165,42,false,0,0,0,ok,ok,"The user wrote a Python script to process CSV rows and inter"
-46,qwen3.6-flash-2026-04-16,alibaba-cloud,anthropic-messages,flash,true,false,1527,1914,165,50,false,0,0,0,ok,ok,"The user sought guidance on refactoring a 100-line Ruby scri"
-47,qwen3-coder-plus,alibaba-cloud,anthropic-messages,plus,false,false,957,1922,179,43,false,0,0,0,ok,ok,"The user's Rust script hangs after approximately 30 HTTPS AP"
-48,qwen-vl-max-latest,alibaba-cloud,anthropic-messages,max,true,false,496,1994,161,62,false,0,0,0,ok,ok,"You identified that the 8-12 second HTTP response delay in y"
-49,qwen3-max-2025-09-23,alibaba-cloud,anthropic-messages,max,true,false,1230,2094,176,34,false,0,0,0,ok,ok,"The user debugged a TypeScript script that hangs after ~30 H"
-50,qwen3.6-27b,alibaba-cloud,anthropic-messages,(other),true,false,1560,2103,159,33,false,0,0,0,ok,ok,"The user reported that a Ruby scraper consistently crashes w"
-51,qwen/qwen2.5-coder-32b-instruct,nvidia-nim,openai-completions,(other),false,false,1371,2127,155,50,false,0,0,0,ok,ok,"The user identified the serialization layer as the bottlenec"
-52,qwen3.5-plus,alibaba-cloud,anthropic-messages,plus,true,false,1191,2187,166,50,false,0,0,0,ok,ok,"The user reported that their Ruby service experienced 8-12 s"
-53,qwen-vl-max,alibaba-cloud,anthropic-messages,max,true,false,518,2203,159,62,false,0,0,0,ok,ok,"You described a monolithic 200-line Rust scraper that has ac"
-54,qwen3-coder-plus-2025-09-23,alibaba-cloud,anthropic-messages,plus,false,false,1202,2211,168,50,false,0,0,0,ok,ok,"The user needed help refactoring a 500-line Node.js endpoint"
-55,qwen-vl-max-2025-08-13,alibaba-cloud,anthropic-messages,max,true,false,516,2241,154,65,false,0,0,0,ok,ok,"You identified that the 8-12 second HTTP response delay in y"
-56,qwen3-coder-480b-a35b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,955,2282,173,38,false,0,0,0,ok,ok,"The user's Go script hangs after approximately 30 HTTPS API "
-57,qwen3-max,alibaba-cloud,anthropic-messages,max,true,false,1116,2368,159,48,false,0,0,0,ok,ok,"The user sought help refactoring a sprawling 1000-line TypeS"
-58,qwen3.5-plus-2026-04-20,alibaba-cloud,anthropic-messages,plus,true,false,1951,2475,180,38,false,0,0,0,ok,ok,"The user described a Node.js script that hangs after approxi"
-59,qwen-max-2025-01-25,alibaba-cloud,anthropic-messages,max,true,false,632,2502,164,75,false,0,0,0,ok,ok,"User wrote a Python script to process 50 rows from a CSV, va"
-60,moonshotai/Kimi-K2-Instruct,huggingface,openai-completions,kimi,false,false,1052,2529,146,45,false,1,3,0.000281,ok,ok,"The user identified that their Rust service’s 8–12 s respons"
-61,qwen3-vl-plus-2025-12-19,alibaba-cloud,anthropic-messages,plus,false,false,1483,2547,154,55,false,0,0,0,ok,ok,"The TypeScript service experienced 8–12 second HTTP response"
-62,qwen3-max-preview,alibaba-cloud,anthropic-messages,max,true,false,1271,2583,160,46,false,0,0,0,ok,ok,"The Node.js endpoint consistently crashed between iterations"
-63,qwen3-max-2026-01-23,alibaba-cloud,anthropic-messages,max,true,false,904,2636,162,62,false,0,0,0,ok,ok,"The user wrote a Go script to process 500 CSV rows with emai"
-64,qwen3.6-plus,alibaba-plan,anthropic-messages,plus,true,false,1864,2740,158,45,false,0,0,0,ok,ok,"The user reported that their Rust service experienced 8-12 s"
-65,qwen3.6-plus-2026-04-02,alibaba-cloud,anthropic-messages,plus,true,false,1740,2740,159,58,false,0,0,0,ok,ok,"The user reported that their Node.js service experienced 8-1"
-66,qwen3.6-max-preview,alibaba-cloud,anthropic-messages,max,true,false,1986,2798,168,29,false,0,0,0,ok,ok,"The user requested assistance refactoring a 200-line Node.js"
-67,qwen3.6-plus,alibaba-cloud,anthropic-messages,plus,true,false,2286,3001,161,40,false,0,0,0,ok,ok,"The user reported that a Rust endpoint consistently timed ou"
-68,gemini-3.1-pro-preview-customtools,google-vertex,google-vertex,pro,true,false,3095,3259,146,124,false,2,12,0.00178,ok,ok,"You explained that your"
-69,gemini-3.1-pro-preview,google-vertex,google-vertex,pro,true,false,3174,3263,153,124,false,2,12,0.001794,ok,ok,"You explained that your Node."
-70,glm-5,alibaba-plan,anthropic-messages,glm,true,false,2229,3316,145,27,false,0,0,0,ok,ok,"User identified serialization and individual Stripe API enri"
-71,moonshotai/kimi-k2-instruct,nvidia-nim,openai-completions,kimi,false,false,971,3508,145,43,false,0,0,0,ok,ok,"The Rust scraper consistently crashed between iterations 500"
--,gemini-1.5-flash,google-vertex,google-vertex,flash,false,false,,4001,,,false,0.075,0.3,,timeout,n/a,""
--,gemini-1.5-flash-8b,google-vertex,google-vertex,flash,false,false,,4000,,,false,0.0375,0.15,,timeout,n/a,""
--,gemini-1.5-pro,google-vertex,google-vertex,pro,false,false,,4000,,,false,1.25,5,,timeout,n/a,""
--,gemini-2.0-flash,google-vertex,google-vertex,flash,false,false,,4000,,,false,0.15,0.6,,timeout,n/a,""
--,gemini-2.0-flash-lite,google-vertex,google-vertex,flash-lite,true,false,,4001,,,false,0.075,0.3,,timeout,n/a,""
--,gemini-2.5-flash,google-vertex,google-vertex,flash,true,false,,4001,,,false,0.3,2.5,,timeout,n/a,""
--,gemini-2.5-flash-lite,google-vertex,google-vertex,flash-lite,true,false,,4001,,,false,0.1,0.4,,timeout,n/a,""
--,gemini-2.5-flash-lite-preview-09-2025,google-vertex,google-vertex,flash-lite,true,false,,4001,,,false,0.1,0.4,,timeout,n/a,""
--,gemini-2.5-pro,google-vertex,google-vertex,pro,true,false,,4001,,,false,1.25,10,,timeout,n/a,""
--,gemini-3-pro-preview,google-vertex,google-vertex,pro,true,false,,156,,,false,2,12,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
--,MiniMaxAI/MiniMax-M2.1,huggingface,openai-completions,mini,true,true,3963,3964,150,128,false,0.3,1.2,0.0001986,empty,empty,""
--,MiniMaxAI/MiniMax-M2.5,huggingface,openai-completions,mini,true,true,,1395,120,128,false,0.3,1.2,0.0001896,empty,empty,""
--,MiniMaxAI/MiniMax-M2.7,huggingface,openai-completions,mini,true,true,,2350,153,128,false,0.3,1.2,0.0001995,empty,empty,""
--,Qwen/Qwen3-235B-A22B-Thinking-2507,huggingface,openai-completions,(other),true,false,1495,4000,,,false,0.3,3,,timeout,n/a,"<think>
-We are given a user message that describes a perform"
--,Qwen/Qwen3-Next-80B-A3B-Thinking,huggingface,openai-completions,(other),false,true,,4000,,,false,0.3,2,,timeout,n/a,""
--,Qwen/Qwen3.5-397B-A17B,huggingface,openai-completions,(other),true,true,,4001,,,false,0.6,3.6,,timeout,n/a,""
--,XiaomiMiMo/MiMo-V2-Flash,huggingface,openai-completions,flash,true,false,,3346,,,false,0.1,0.3,,error:429 rate,n/a,""
--,deepseek-ai/DeepSeek-R1-0528,huggingface,openai-completions,(other),true,true,,2117,152,128,false,3,5,0.001096,empty,empty,""
--,deepseek-ai/DeepSeek-V3.2,huggingface,openai-completions,(other),true,false,,4000,,,false,0.28,0.4,,timeout,n/a,""
--,deepseek-ai/DeepSeek-V4-Pro,huggingface,openai-completions,pro,true,true,,2346,145,128,false,1.74,3.48,0.00069774,empty,empty,""
--,moonshotai/Kimi-K2-Instruct-0905,huggingface,openai-completions,kimi,false,true,,4000,,,false,1,3,,timeout,n/a,""
+1,qwen-flash-character,alibaba-cloud,anthropic-messages,flash,false,false,475,701,128,38,false,0,0,0,ok,multi-sentence,"Sounds like you have a monolith! Let's create some clean, is"
+2,qwen-vl-plus,alibaba-cloud,anthropic-messages,plus,false,false,426,704,154,35,false,0,0,0,ok,ok,"A Rust service experiences slow HTTP response times due to i"
+3,qwen-vl-plus-latest,alibaba-cloud,anthropic-messages,plus,false,false,439,747,165,40,false,0,0,0,ok,ok,"Refactored a 1000-line Go worker by splitting it into focuse"
+4,gemini-2.5-flash-lite,google-vertex,google-vertex,flash-lite,true,false,631,752,148,21,false,0.1,0.4,0.0000232,ok,ok,"The user requested help refactoring a large Ruby data synchr"
+5,qwen3.5-flash-2026-02-23,alibaba-cloud,anthropic-messages,flash,true,false,503,782,179,34,false,0,0,0,ok,ok,"The user described a Python script that hangs after approxim"
+6,qwen3.5-122b-a10b,alibaba-cloud,anthropic-messages,(other),true,false,473,784,182,37,false,0,0,0,ok,ok,"The user described a Node.js script that hangs after approxi"
+7,qwen-flash,alibaba-cloud,anthropic-messages,flash,false,false,472,824,163,40,false,0,0,0,ok,ok,"The Ruby script's memory growth was caused by the API client"
+8,qwen3.5-27b,alibaba-cloud,anthropic-messages,(other),true,false,504,846,157,29,false,0,0,0,ok,ok,"The Python scraper consistently crashed on iteration 200 wit"
+9,qwen-turbo-latest,alibaba-cloud,anthropic-messages,turbo,false,false,508,846,164,31,false,0,0,0,ok,ok,"Your TypeScript service experiences 8-12 second HTTP respons"
+10,qwen-turbo-2024-11-01,alibaba-cloud,anthropic-messages,turbo,false,false,565,851,155,29,false,0,0,0,ok,ok,"The user discussed their Rust service's slow HTTP response d"
+11,qwen-plus-2025-09-11,alibaba-cloud,anthropic-messages,plus,false,false,530,851,153,35,false,0,0,0,ok,ok,"The Rust service took 8–12 seconds to respond due to sequent"
+12,qwen-vl-plus-2025-01-25,alibaba-cloud,anthropic-messages,plus,false,false,460,856,157,32,false,0,0,0,ok,ok,"The Python endpoint consistently crashed at or near iteratio"
+13,qwen3-vl-flash-2025-10-15,alibaba-cloud,anthropic-messages,flash,false,false,632,902,174,43,false,0,0,0,ok,ok,"The Python script hangs after ~30 HTTPS API calls with no er"
+14,qwen-turbo-2025-04-28,alibaba-cloud,anthropic-messages,turbo,false,false,506,906,163,45,false,0,0,0,ok,ok,"The Rust scraper crashes on iteration 30 due to a timeout er"
+15,qwen3-vl-plus-2025-12-19,alibaba-cloud,anthropic-messages,plus,false,false,562,985,158,46,false,0,0,0,ok,ok,"Refactored the monolithic Go endpoint into separate modules "
+16,qwen-vl-plus-2025-05-07,alibaba-cloud,anthropic-messages,plus,false,false,513,1015,157,45,false,0,0,0,ok,ok,"The Rust service serialized 1000 records into JSON with sepa"
+17,gemini-2.5-flash,google-vertex,google-vertex,flash,true,false,819,1033,150,33,false,0.3,2.5,0.0001275,ok,ok,"The user requested help refactoring a 1000-line Rust scraper"
+18,qwen-plus-2025-07-14,alibaba-cloud,anthropic-messages,plus,false,false,518,1043,160,40,false,0,0,0,ok,ok,"The Python worker consistently crashed around iteration 1000"
+19,Qwen/Qwen3-Coder-480B-A35B-Instruct,huggingface,openai-completions,(other),false,false,736,1095,0,0,false,2,2,0,ok,ok,"The user's Go script hangs after 30 HTTPS API call iteration"
+20,qwen3.5-flash,alibaba-cloud,anthropic-messages,flash,true,false,531,1138,162,30,false,0,0,0,ok,ok,"The user sought guidance on refactoring a 200-line TypeScrip"
+21,qwen-plus-2025-12-01,alibaba-cloud,anthropic-messages,plus,false,false,527,1211,154,37,false,0,0,0,ok,ok,"The HTTP response latency was caused by serializing 30 recor"
+22,qwen-plus,alibaba-cloud,anthropic-messages,plus,false,false,533,1246,160,38,false,0,0,0,ok,ok,"The HTTP response latency was caused by serializing 200 reco"
+23,mistralai/mistral-nemotron,nvidia-nim,openai-completions,(other),false,false,529,1301,147,37,false,0,0,0,ok,ok,"The TypeScript migration consistently crashed between iterat"
+24,qwen3.5-35b-a3b,alibaba-cloud,anthropic-messages,(other),true,false,733,1327,163,34,false,0,0,0,ok,ok,"The Rust migration consistently crashed between iterations 5"
+25,gemini-3-flash-preview,google-vertex,google-vertex,flash,true,false,1216,1328,154,36,false,0.5,3,0.000185,ok,ok,"The user requested guidance on modularizing a monolithic 30-"
+26,openai/gpt-oss-120b,nvidia-nim,openai-completions,(other),false,true,1076,1342,220,128,false,0,0,0,ok,ok,"The user described a Rust script that streamed a CSV of 50‑r"
+27,qwen3-coder-next,alibaba-cloud,anthropic-messages,(other),false,false,1045,1366,161,39,false,0,0,0,ok,ok,"You're experiencing unbounded memory growth while processing"
+28,qwen3-vl-flash,alibaba-cloud,anthropic-messages,flash,false,false,553,1368,161,72,false,0,0,0,ok,ok,"The Node.js pipeline, originally a 100-line script for synci"
+29,qwen/qwen3-next-80b-a3b-instruct,nvidia-nim,openai-completions,(other),false,false,510,1376,163,44,false,0,0,0,ok,ok,"The Go script processing a CSV stream experienced unbounded "
+30,qwen3-coder-flash,alibaba-cloud,anthropic-messages,flash,false,false,948,1387,158,47,false,0,0,0,ok,ok,"The developer refactored their 30-line TypeScript scheduler "
+31,qwen3-vl-plus,alibaba-cloud,anthropic-messages,plus,false,false,541,1409,165,69,false,0,0,0,ok,ok,"Refactored the monolithic 500-line Python worker into modula"
+32,qwen-plus-latest,alibaba-cloud,anthropic-messages,plus,false,false,501,1499,159,54,false,0,0,0,ok,ok,"The user refactored a 500-line Rust scraper—originally a sim"
+33,Qwen/Qwen3-Coder-Next,huggingface,openai-completions,(other),false,false,1133,1506,160,72,false,0.2,1.5,0.00014,ok,ok,"You refactored a 500-line Rust endpoint—originally a simple "
+34,qwen3-coder-480b-a35b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,1144,1508,164,40,false,0,0,0,ok,ok,"The user wrote a Node.js script to process CSV rows and inte"
+35,moonshotai/Kimi-K2.5,huggingface,openai-completions,kimi,true,false,695,1513,165,38,false,0.6,3,0.000213,ok,ok,"The user debugged a Node.js script that froze after ~30 HTTP"
+36,qwen3-vl-plus-2025-09-23,alibaba-cloud,anthropic-messages,plus,false,false,603,1520,160,40,false,0,0,0,ok,ok,"The Go scheduler consistently crashed around iteration 500 d"
+37,meta/llama-4-maverick-17b-128e-instruct,nvidia-nim,openai-completions,(other),false,false,1007,1547,163,38,false,0,0,0,ok,ok,"The user wrote a Go script to process a CSV export, validate"
+38,qwen3-coder-plus,alibaba-cloud,anthropic-messages,plus,false,false,847,1575,182,32,false,0,0,0,ok,ok,"The user's Go script hung after 100 HTTPS API calls due to p"
+39,qwen-plus-2025-01-25,alibaba-cloud,anthropic-messages,plus,false,false,543,1606,158,60,false,0,0,0,ok,ok,"The user explained that their Rust service, which queries 20"
+40,qwen-plus-2025-04-28,alibaba-cloud,anthropic-messages,plus,false,false,649,1647,158,52,false,0,0,0,ok,ok,"The user identified that their Rust service's slow HTTP resp"
+41,qwen-turbo,alibaba-cloud,anthropic-messages,turbo,false,false,1192,1663,158,41,false,0,0,0,ok,ok,"Your TypeScript service experiences 8-12 second HTTP respons"
+42,qwen/qwen2.5-coder-32b-instruct,nvidia-nim,openai-completions,(other),false,false,507,1672,167,87,false,0,0,0,ok,ok,"The user wrote a TypeScript script to process 30 rows from a"
+43,qwen3-coder-plus-2025-07-22,alibaba-cloud,anthropic-messages,plus,false,false,1200,1725,173,38,false,0,0,0,ok,ok,"The user's Rust script hangs after 30 HTTPS API call iterati"
+44,qwen-max-2025-01-25,alibaba-cloud,anthropic-messages,max,true,false,503,1801,160,56,false,0,0,0,ok,ok,"User sought advice on refactoring a 200-line Node.js pipelin"
+45,XiaomiMiMo/MiMo-V2-Flash,huggingface,openai-completions,flash,true,false,1178,1805,172,40,false,0.1,0.3,0.000029199999999999998,ok,ok,"You added logging and timeouts to a Rust script that authent"
+46,qwen3.6-flash,alibaba-cloud,anthropic-messages,flash,true,false,1390,1861,159,43,false,0,0,0,ok,ok,"The user described a Python service bottleneck where 8-12 se"
+47,qwen-max-latest,alibaba-cloud,anthropic-messages,max,true,false,542,1869,160,53,false,0,0,0,ok,ok,"User sought advice on refactoring a 100-line Python scraper "
+48,qwen-max,alibaba-cloud,anthropic-messages,max,true,false,521,1896,164,89,false,0,0,0,ok,ok,"The user described a performance issue with their Node.js se"
+49,qwen3.5-plus-2026-02-15,alibaba-cloud,anthropic-messages,plus,true,false,1292,1899,171,35,false,0,0,0,ok,ok,"The user described a Ruby script that processes 500 CSV rows"
+50,qwen3.5-plus,alibaba-cloud,anthropic-messages,plus,true,false,1259,1938,183,37,false,0,0,0,ok,ok,"The user described debugging a Ruby script that hangs after "
+51,qwen3.5-397b-a17b,alibaba-cloud,anthropic-messages,(other),true,false,1148,1948,163,46,false,0,0,0,ok,ok,"The user described a Python service bottleneck where 1000 Po"
+52,qwen-vl-max-2025-04-08,alibaba-cloud,anthropic-messages,max,true,false,535,1975,159,52,false,0,0,0,ok,ok,"The user explained that their Rust service's slow HTTP respo"
+53,moonshotai/kimi-k2-instruct,nvidia-nim,openai-completions,kimi,false,false,859,2000,144,39,false,0,0,0,ok,ok,"The scraper consistently failed between iterations 200 and 2"
+54,Qwen/Qwen3-Next-80B-A3B-Instruct,huggingface,openai-completions,(other),false,false,1912,2021,157,38,false,0.25,1,0.00007725,ok,ok,"The Go migration consistently crashed on iteration 50–55 wit"
+55,qwen3-max,alibaba-cloud,anthropic-messages,max,true,false,1044,2026,153,37,false,0,0,0,ok,ok,"The Rust scheduler consistently crashed between iterations 3"
+56,qwen3.5-plus-2026-04-20,alibaba-cloud,anthropic-messages,plus,true,false,1584,2027,158,29,false,0,0,0,ok,ok,"The user described a Go service performance bottleneck cause"
+57,qwen3.6-flash-2026-04-16,alibaba-cloud,anthropic-messages,flash,true,false,1629,2050,167,34,false,0,0,0,ok,ok,"The user sought guidance on refactoring a 500-line Node.js s"
+58,qwen3-vl-flash-2026-01-22,alibaba-cloud,anthropic-messages,flash,false,false,747,2111,157,65,false,0,0,0,ok,ok,"The TypeScript scraper consistently crashed on iteration 50 "
+59,qwen3-max-preview,alibaba-cloud,anthropic-messages,max,true,false,1291,2141,159,47,false,0,0,0,ok,ok,"The user sought help refactoring a sprawling 100-line Node.j"
+60,qwen3-max-2026-01-23,alibaba-cloud,anthropic-messages,max,true,false,978,2167,155,43,false,0,0,0,ok,ok,"The Python scraper consistently crashed between iterations 2"
+61,qwen3.6-27b,alibaba-cloud,anthropic-messages,(other),true,false,1421,2205,167,33,false,0,0,0,ok,ok,"The user sought advice on refactoring a complex 500-line Go "
+62,qwen3.6-plus-2026-04-02,alibaba-cloud,anthropic-messages,plus,true,false,1540,2274,160,40,false,0,0,0,ok,ok,"The user reported that a Rust migration consistently timed o"
+63,moonshotai/Kimi-K2-Instruct,huggingface,openai-completions,kimi,false,false,867,2307,153,45,false,1,3,0.000288,ok,ok,"The user identified that their Ruby service’s 8–s response f"
+64,qwen3-coder-plus-2025-09-23,alibaba-cloud,anthropic-messages,plus,false,false,978,2370,162,54,false,0,0,0,ok,ok,"The user's Rust service experiences 8-12 second HTTP respons"
+65,qwen3-max-2025-09-23,alibaba-cloud,anthropic-messages,max,true,false,1278,2597,155,49,false,0,0,0,ok,ok,"The Rust endpoint consistently crashes with a timeout error "
+66,qwen3.6-plus,alibaba-plan,anthropic-messages,plus,true,false,1634,2680,165,57,false,0,0,0,ok,ok,"The user described a Python script that processes CSV data a"
+67,qwen3.6-max-preview,alibaba-cloud,anthropic-messages,max,true,false,1859,2689,164,47,false,0,0,0,ok,ok,"The user reported that their Rust service experienced 8-12 s"
+68,qwen-vl-max,alibaba-cloud,anthropic-messages,max,true,false,508,2727,162,82,false,0,0,0,ok,ok,"You wrote a Python script to process 1000 CSV rows, validati"
+69,qwen3.6-plus,alibaba-cloud,anthropic-messages,plus,true,false,2168,2909,158,43,false,0,0,0,ok,ok,"The user reported that their Node.js pipeline consistently t"
+70,gemini-3.1-pro-preview,google-vertex,google-vertex,pro,true,false,2934,2973,150,124,false,2,12,0.001788,ok,ok,"The user requested help refactoring"
+71,glm-5,alibaba-plan,anthropic-messages,glm,true,false,2179,3065,159,45,false,0,0,0,ok,ok,"The user reported a memory leak in a Go CSV processing scrip"
+72,qwen-vl-max-latest,alibaba-cloud,anthropic-messages,max,true,false,521,3072,159,49,false,0,0,0,ok,ok,"You described a complex, monolithic Node.js scraper that has"
+73,nvidia/llama-3.3-nemotron-super-49b-v1,nvidia-nim,openai-completions,(other),true,false,324,3144,175,52,false,0,0,0,ok,ok,"The user debugged a Node.js script that hung after 1000 HTTP"
+74,Qwen/Qwen3-Next-80B-A3B-Thinking,huggingface,openai-completions,(other),false,true,3717,3908,162,575,false,0.3,2,0.0011986,ok,ok,"The Node.js service took 8–12 seconds to return 200 records "
+75,kimi-k2-thinking,kimi-coding,anthropic-messages,kimi,true,false,2908,3957,148,44,false,0,0,0,ok,ok,"The Rust worker consistently crashed between iterations 1000"
+-,gemini-1.5-flash,google-vertex,google-vertex,flash,false,false,,515,,,false,0.075,0.3,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
+-,gemini-1.5-flash-8b,google-vertex,google-vertex,flash,false,false,,491,,,false,0.0375,0.15,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
+-,gemini-1.5-pro,google-vertex,google-vertex,pro,false,false,,478,,,false,1.25,5,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
+-,gemini-2.0-flash,google-vertex,google-vertex,flash,false,false,,490,,,false,0.15,0.6,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
+-,gemini-2.0-flash-lite,google-vertex,google-vertex,flash-lite,true,false,,479,,,false,0.075,0.3,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
+-,gemini-2.5-flash-lite-preview-09-2025,google-vertex,google-vertex,flash-lite,true,false,,477,,,false,0.1,0.4,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
+-,gemini-2.5-pro,google-vertex,google-vertex,pro,true,false,,281,,,false,1.25,10,,error:400 {"error":{"message":"{\n  \"error\": {\n,n/a,""
+-,gemini-3-pro-preview,google-vertex,google-vertex,pro,true,false,,84,,,false,2,12,,error:{"error":{"message":"{\n  \"error\": {\n    \"code\": 404,\n,n/a,""
+-,gemini-3.1-pro-preview-customtools,google-vertex,google-vertex,pro,true,false,,4000,,,false,2,12,,timeout,n/a,""
+-,MiniMaxAI/MiniMax-M2.1,huggingface,openai-completions,mini,true,true,,3258,155,128,false,0.3,1.2,0.00020009999999999998,empty,empty,""
+-,MiniMaxAI/MiniMax-M2.5,huggingface,openai-completions,mini,true,true,,949,116,128,false,0.3,1.2,0.00018839999999999997,empty,empty,""
+-,MiniMaxAI/MiniMax-M2.7,huggingface,openai-completions,mini,true,true,,4001,,,false,0.3,1.2,,timeout,n/a,""
+-,Qwen/Qwen3-235B-A22B-Thinking-2507,huggingface,openai-completions,(other),true,false,1137,4003,,,false,0.3,3,,timeout,n/a,"<think>
+Okay, the user is having memory issues with their Ru"
+-,Qwen/Qwen3.5-397B-A17B,huggingface,openai-completions,(other),true,true,,1811,157,128,false,0.6,3.6,0.000555,empty,empty,""
+-,deepseek-ai/DeepSeek-R1-0528,huggingface,openai-completions,(other),true,true,,1366,155,128,false,3,5,0.001105,empty,empty,""
+-,deepseek-ai/DeepSeek-V3.2,huggingface,openai-completions,(other),true,true,,4001,,,false,0.28,0.4,,timeout,n/a,""
+-,deepseek-ai/DeepSeek-V4-Pro,huggingface,openai-completions,pro,true,true,,4000,,,false,1.74,3.48,,timeout,n/a,""
+-,moonshotai/Kimi-K2-Instruct-0905,huggingface,openai-completions,kimi,false,false,2292,4002,,,false,1,3,,timeout,n/a,"The user asked for guidance on refactoring a 50-line Python "
 -,moonshotai/Kimi-K2-Thinking,huggingface,openai-completions,kimi,true,true,,4000,,,false,0.6,2.5,,timeout,n/a,""
--,moonshotai/Kimi-K2.5,huggingface,openai-completions,kimi,true,true,,3842,155,128,false,0.6,3,0.000477,empty,empty,""
--,moonshotai/Kimi-K2.6,huggingface,openai-completions,kimi,true,true,,3467,169,128,false,0.95,4,0.00067255,empty,empty,""
--,zai-org/GLM-4.7,huggingface,openai-completions,glm,true,false,,277,,,false,0.6,2.2,,error:400 400 status code (no body),n/a,""
--,zai-org/GLM-4.7-Flash,huggingface,openai-completions,glm,true,false,,4000,,,false,0,0,,timeout,n/a,""
--,zai-org/GLM-5,huggingface,openai-completions,glm,true,true,,2235,163,128,false,1,3.2,0.0005726,empty,empty,""
+-,moonshotai/Kimi-K2.6,huggingface,openai-completions,kimi,true,true,,4000,,,false,0.95,4,,timeout,n/a,""
+-,zai-org/GLM-4.7,huggingface,openai-completions,glm,true,false,,218,,,false,0.6,2.2,,error:400 400 status code (no body),n/a,""
+-,zai-org/GLM-4.7-Flash,huggingface,openai-completions,glm,true,true,,4000,,,false,0,0,,timeout,n/a,""
+-,zai-org/GLM-5,huggingface,openai-completions,glm,true,true,,2718,152,128,false,1,3.2,0.0005616,empty,empty,""
 -,zai-org/GLM-5.1,huggingface,openai-completions,glm,true,true,,4001,,,false,1,3.2,,timeout,n/a,""
--,kimi-for-coding,kimi-coding,anthropic-messages,kimi,true,false,,4001,,,false,0,0,,timeout,n/a,""
--,kimi-k2-thinking,kimi-coding,anthropic-messages,kimi,true,false,,4001,,,false,0,0,,timeout,n/a,""
--,qwen3.5-plus,alibaba-plan,anthropic-messages,plus,true,false,,1049,,,false,0,0,,error:400 400 event:error
-data:{"request_id":"e5b3,n/a,""
--,kimi-k2.5,alibaba-plan,anthropic-messages,kimi,true,false,,1165,,,false,0,0,,error:400 400 event:error
-data:{"request_id":"28e2,n/a,""
--,MiniMax-M2.5,alibaba-plan,anthropic-messages,mini,true,false,,1355,,,false,0,0,,error:400 400 event:error
-data:{"request_id":"0569,n/a,""
--,qwen3-coder-plus,alibaba-plan,anthropic-messages,plus,false,false,,1169,,,false,0,0,,error:400 400 event:error
-data:{"request_id":"7e2c,n/a,""
--,qwen3-coder-next,alibaba-plan,anthropic-messages,(other),false,false,,1167,,,false,0,0,,error:400 400 event:error
-data:{"request_id":"b7bf,n/a,""
--,qwen3-max-2026-01-23,alibaba-plan,anthropic-messages,max,true,false,,1166,,,false,0,0,,error:400 400 event:error
-data:{"request_id":"f62b,n/a,""
+-,kimi-for-coding,kimi-coding,anthropic-messages,kimi,true,false,2965,4004,,,false,0,0,,timeout,n/a,"The user debugged a Go script that froze after ~30 HTTPS API"
+-,qwen3.5-plus,alibaba-plan,anthropic-messages,plus,true,false,,928,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"73df,n/a,""
+-,kimi-k2.5,alibaba-plan,anthropic-messages,kimi,true,false,,986,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"da03,n/a,""
+-,MiniMax-M2.5,alibaba-plan,anthropic-messages,mini,true,false,,1335,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"082f,n/a,""
+-,qwen3-coder-plus,alibaba-plan,anthropic-messages,plus,false,false,,952,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"1b64,n/a,""
+-,qwen3-coder-next,alibaba-plan,anthropic-messages,(other),false,false,,965,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"1cff,n/a,""
+-,qwen3-max-2026-01-23,alibaba-plan,anthropic-messages,max,true,false,,967,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"d6b2,n/a,""
 -,glm-4.7,alibaba-plan,anthropic-messages,glm,true,false,,308,,,false,0,0,,error:400 400 event:error
-data:{"request_id":"1bc1,n/a,""
--,deepseek-v3.2,alibaba-plan,openai-completions,(other),true,false,,598,,,false,0,0,,error:400 400 data: {"error":{"code":"invalid_para,n/a,""
--,qwen3.6-35b-a3b,alibaba-cloud,anthropic-messages,(other),true,false,,1169,,,false,0,0,,error:400 400 event:error
+data:{"request_id":"bc30,n/a,""
+-,deepseek-v3.2,alibaba-plan,openai-completions,(other),true,false,,550,,,false,0,0,,error:400 400 data: {"error":{"code":"invalid_para,n/a,""
+-,qwen3.6-35b-a3b,alibaba-cloud,anthropic-messages,(other),true,false,,921,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,deepseek-v3.2,alibaba-cloud,openai-completions,(other),true,false,,323,,,false,0,0,,error:400 400 developer is not one of ['system', ',n/a,""
--,qwen-plus-character,alibaba-cloud,anthropic-messages,plus,false,false,,437,,,false,0,0,,error:400 400 event:error
+-,deepseek-v3.2,alibaba-cloud,openai-completions,(other),true,false,,288,,,false,0,0,,error:400 400 developer is not one of ['system', ',n/a,""
+-,qwen-plus-character,alibaba-cloud,anthropic-messages,plus,false,false,,373,,,false,0,0,,error:429 rate,n/a,""
+-,qwen-mt-lite,alibaba-cloud,anthropic-messages,lite,false,false,,326,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen-mt-lite,alibaba-cloud,anthropic-messages,lite,false,false,,307,,,false,0,0,,error:400 400 event:error
+-,qwen-vl-ocr-2025-11-20,alibaba-cloud,anthropic-messages,(other),false,false,,315,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen-vl-ocr-2025-11-20,alibaba-cloud,anthropic-messages,(other),false,false,,307,,,false,0,0,,error:400 400 event:error
+-,qwen-mt-flash,alibaba-cloud,anthropic-messages,flash,false,false,,303,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen-mt-flash,alibaba-cloud,anthropic-messages,flash,false,false,,326,,,false,0,0,,error:400 400 event:error
+-,ccai-pro,alibaba-cloud,anthropic-messages,pro,false,false,,320,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,ccai-pro,alibaba-cloud,anthropic-messages,pro,false,false,,303,,,false,0,0,,error:400 400 event:error
+-,tongyi-tingwu-slp,alibaba-cloud,anthropic-messages,(other),false,false,,321,,,false,0,0,,error:429 rate,n/a,""
+-,qwen2.5-7b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,319,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,tongyi-tingwu-slp,alibaba-cloud,anthropic-messages,(other),false,false,,302,,,false,0,0,,error:400 400 event:error
+-,qwen2.5-14b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,316,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen2.5-7b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,302,,,false,0,0,,error:400 400 event:error
+-,qwen2.5-32b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,325,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen2.5-14b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,302,,,false,0,0,,error:400 400 event:error
+-,qwen2.5-72b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,307,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen2.5-32b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,298,,,false,0,0,,error:400 400 event:error
+-,qwen2.5-14b-instruct-1m,alibaba-cloud,anthropic-messages,(other),false,false,,318,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen2.5-72b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,313,,,false,0,0,,error:400 400 event:error
+-,qwen2.5-7b-instruct-1m,alibaba-cloud,anthropic-messages,(other),false,false,,313,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen2.5-14b-instruct-1m,alibaba-cloud,anthropic-messages,(other),false,false,,300,,,false,0,0,,error:400 400 event:error
+-,qwq-plus-2025-03-05,alibaba-cloud,anthropic-messages,plus,true,false,,305,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen2.5-7b-instruct-1m,alibaba-cloud,anthropic-messages,(other),false,false,,297,,,false,0,0,,error:400 400 event:error
+-,qwen-mt-turbo,alibaba-cloud,anthropic-messages,turbo,false,false,,301,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwq-plus-2025-03-05,alibaba-cloud,anthropic-messages,plus,true,false,,318,,,false,0,0,,error:400 400 event:error
+-,qwen-mt-plus,alibaba-cloud,anthropic-messages,plus,false,false,,305,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen-mt-turbo,alibaba-cloud,anthropic-messages,turbo,false,false,,319,,,false,0,0,,error:400 400 event:error
+-,qwen-coder-plus,alibaba-cloud,anthropic-messages,plus,false,false,,324,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen-mt-plus,alibaba-cloud,anthropic-messages,plus,false,false,,302,,,false,0,0,,error:400 400 event:error
+-,qwq-plus,alibaba-cloud,anthropic-messages,plus,true,false,,325,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen-coder-plus,alibaba-cloud,anthropic-messages,plus,false,false,,312,,,false,0,0,,error:400 400 event:error
+-,qwen2.5-vl-32b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,313,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwq-plus,alibaba-cloud,anthropic-messages,plus,true,false,,295,,,false,0,0,,error:400 400 event:error
+-,qvq-max,alibaba-cloud,anthropic-messages,max,true,false,,313,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen2.5-vl-32b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,291,,,false,0,0,,error:400 400 event:error
+-,qwen3-8b,alibaba-cloud,anthropic-messages,(other),false,false,,324,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qvq-max,alibaba-cloud,anthropic-messages,max,true,false,,319,,,false,0,0,,error:400 400 event:error
+-,qwen3-30b-a3b,alibaba-cloud,anthropic-messages,(other),false,false,,323,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-8b,alibaba-cloud,anthropic-messages,(other),false,false,,316,,,false,0,0,,error:400 400 event:error
+-,qwen3-235b-a22b,alibaba-cloud,anthropic-messages,(other),false,false,,318,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-30b-a3b,alibaba-cloud,anthropic-messages,(other),false,false,,299,,,false,0,0,,error:400 400 event:error
+-,qwen3-235b-a22b-instruct-2507,alibaba-cloud,anthropic-messages,(other),false,false,,316,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-235b-a22b,alibaba-cloud,anthropic-messages,(other),false,false,,325,,,false,0,0,,error:400 400 event:error
+-,qwen3-235b-a22b-thinking-2507,alibaba-cloud,anthropic-messages,(other),true,false,,311,,,false,0,0,,error:429 rate,n/a,""
+-,qwen-vl-max-2025-08-13,alibaba-cloud,anthropic-messages,max,true,false,2974,4001,,,false,0,0,,timeout,n/a,"You identified that the 8-12 second HTTP response delay in y"
+-,qwen3-vl-235b-a22b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,320,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-235b-a22b-instruct-2507,alibaba-cloud,anthropic-messages,(other),false,false,,322,,,false,0,0,,error:400 400 event:error
+-,qwen3-vl-235b-a22b-thinking,alibaba-cloud,anthropic-messages,(other),true,false,,311,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-235b-a22b-thinking-2507,alibaba-cloud,anthropic-messages,(other),true,false,,297,,,false,0,0,,error:400 400 event:error
+-,qwen3-30b-a3b-thinking-2507,alibaba-cloud,anthropic-messages,(other),true,false,,289,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-vl-235b-a22b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,313,,,false,0,0,,error:400 400 event:error
+-,qwen3-30b-a3b-instruct-2507,alibaba-cloud,anthropic-messages,(other),false,false,,319,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-vl-235b-a22b-thinking,alibaba-cloud,anthropic-messages,(other),true,false,,299,,,false,0,0,,error:400 400 event:error
+-,qwen3-14b,alibaba-cloud,anthropic-messages,(other),false,false,,317,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-30b-a3b-thinking-2507,alibaba-cloud,anthropic-messages,(other),true,false,,298,,,false,0,0,,error:400 400 event:error
+-,qwen3-32b,alibaba-cloud,anthropic-messages,(other),false,false,,287,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-30b-a3b-instruct-2507,alibaba-cloud,anthropic-messages,(other),false,false,,322,,,false,0,0,,error:400 400 event:error
+-,qwen3-0.6b,alibaba-cloud,anthropic-messages,(other),false,false,,295,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-14b,alibaba-cloud,anthropic-messages,(other),false,false,,312,,,false,0,0,,error:400 400 event:error
+-,qwen3-4b,alibaba-cloud,anthropic-messages,(other),false,false,,329,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-32b,alibaba-cloud,anthropic-messages,(other),false,false,,290,,,false,0,0,,error:400 400 event:error
+-,qwen3-1.7b,alibaba-cloud,anthropic-messages,(other),false,false,,330,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-0.6b,alibaba-cloud,anthropic-messages,(other),false,false,,311,,,false,0,0,,error:400 400 event:error
+-,qwen3-next-80b-a3b-thinking,alibaba-cloud,anthropic-messages,(other),true,false,,317,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-4b,alibaba-cloud,anthropic-messages,(other),false,false,,312,,,false,0,0,,error:400 400 event:error
+-,qwen3-next-80b-a3b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,318,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
--,qwen3-1.7b,alibaba-cloud,anthropic-messages,(other),false,false,,297,,,false,0,0,,error:402 payment,n/a,""
--,qwen3-next-80b-a3b-thinking,alibaba-cloud,anthropic-messages,(other),true,false,,302,,,false,0,0,,error:400 400 event:error
-data:{"code":"InvalidPar,n/a,""
--,qwen3-next-80b-a3b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,299,,,false,0,0,,error:400 400 event:error
-data:{"code":"InvalidPar,n/a,""
--,qwen2-7b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,297,,,false,0,0,,error:400 400 event:error
+-,qwen2-7b-instruct,alibaba-cloud,anthropic-messages,(other),false,false,,317,,,false,0,0,,error:400 400 event:error
 data:{"code":"InvalidPar,n/a,""
 -,deepseek-ai/deepseek-v4-flash,nvidia-nim,openai-completions,flash,true,false,,4001,,,false,0,0,,timeout,n/a,""
 -,deepseek-ai/deepseek-v4-pro,nvidia-nim,openai-completions,pro,true,false,,4001,,,false,0,0,,timeout,n/a,""
--,deepseek-ai/deepseek-v3.2,nvidia-nim,openai-completions,(other),true,false,,399,,,false,0,0,,error:410 status code (no body),n/a,""
--,deepseek-ai/deepseek-v3.1,nvidia-nim,openai-completions,(other),true,false,,406,,,false,0,0,,error:410 status code (no body),n/a,""
--,deepseek-ai/deepseek-v3.1-terminus,nvidia-nim,openai-completions,(other),true,false,,401,,,false,0,0,,error:410 status code (no body),n/a,""
--,moonshotai/kimi-k2.6,nvidia-nim,openai-completions,kimi,true,false,,4001,,,false,0,0,,timeout,n/a,""
--,moonshotai/kimi-k2-thinking,nvidia-nim,openai-completions,kimi,true,false,,4001,,,false,0,0,,timeout,n/a,""
--,moonshotai/kimi-k2-instruct-0905,nvidia-nim,openai-completions,kimi,false,false,,92,,,false,0,0,,error:410 status code (no body),n/a,""
--,minimaxai/minimax-m2.1,nvidia-nim,openai-completions,mini,false,false,,84,,,false,0,0,,error:410 status code (no body),n/a,""
--,minimaxai/minimax-m2,nvidia-nim,openai-completions,mini,false,false,,80,,,false,0,0,,error:410 status code (no body),n/a,""
+-,deepseek-ai/deepseek-v3.2,nvidia-nim,openai-completions,(other),true,false,,337,,,false,0,0,,error:410 status code (no body),n/a,""
+-,deepseek-ai/deepseek-v3.1,nvidia-nim,openai-completions,(other),true,false,,336,,,false,0,0,,error:410 status code (no body),n/a,""
+-,deepseek-ai/deepseek-v3.1-terminus,nvidia-nim,openai-completions,(other),true,false,,337,,,false,0,0,,error:410 status code (no body),n/a,""
+-,moonshotai/kimi-k2.6,nvidia-nim,openai-completions,kimi,true,false,,4002,,,false,0,0,,timeout,n/a,""
+-,moonshotai/kimi-k2-thinking,nvidia-nim,openai-completions,kimi,true,false,,4002,,,false,0,0,,timeout,n/a,""
+-,moonshotai/kimi-k2-instruct-0905,nvidia-nim,openai-completions,kimi,false,false,,73,,,false,0,0,,error:410 status code (no body),n/a,""
+-,minimaxai/minimax-m2.1,nvidia-nim,openai-completions,mini,false,false,,73,,,false,0,0,,error:410 status code (no body),n/a,""
+-,minimaxai/minimax-m2,nvidia-nim,openai-completions,mini,false,false,,71,,,false,0,0,,error:410 status code (no body),n/a,""
 -,minimaxai/minimax-m2.7,nvidia-nim,openai-completions,mini,false,false,,4001,,,false,0,0,,timeout,n/a,""
--,z-ai/glm5,nvidia-nim,openai-completions,glm,true,false,,4000,,,false,0,0,,timeout,n/a,""
--,z-ai/glm4.7,nvidia-nim,openai-completions,glm,true,false,,4000,,,false,0,0,,timeout,n/a,""
--,openai/gpt-oss-20b,nvidia-nim,openai-completions,(other),false,true,,1158,223,128,false,0,0,0,empty,empty,""
--,stepfun-ai/step-3.5-flash,nvidia-nim,openai-completions,flash,false,true,,3417,182,128,false,0,0,0,empty,empty,""
+-,z-ai/glm5,nvidia-nim,openai-completions,glm,true,false,,4001,,,false,0,0,,timeout,n/a,""
+-,z-ai/glm4.7,nvidia-nim,openai-completions,glm,true,false,,4001,,,false,0,0,,timeout,n/a,""
+-,openai/gpt-oss-20b,nvidia-nim,openai-completions,(other),false,true,,1126,215,128,false,0,0,0,empty,empty,""
+-,stepfun-ai/step-3.5-flash,nvidia-nim,openai-completions,flash,false,true,,1980,171,128,false,0,0,0,empty,empty,""
 -,bytedance/seed-oss-36b-instruct,nvidia-nim,openai-completions,(other),false,true,,4000,,,false,0,0,,timeout,n/a,""
--,qwen/qwen3-coder-480b-a35b-instruct,nvidia-nim,openai-completions,(other),true,false,2568,4000,,,false,0,0,,timeout,n/a,"The Node.js endpoint consistently crashes around iteration 5"
--,qwen/qwen3-235b-a22b,nvidia-nim,openai-completions,(other),true,false,,153,,,false,0,0,,error:410 status code (no body),n/a,""
--,qwen/qwen3-next-80b-a3b-instruct,nvidia-nim,openai-completions,(other),false,false,,4000,,,false,0,0,,timeout,n/a,""
--,qwen/qwen3-next-80b-a3b-thinking,nvidia-nim,openai-completions,(other),true,true,,1196,162,128,false,0,0,0,empty,empty,""
--,qwen/qwq-32b,nvidia-nim,openai-completions,(other),true,false,,46,,,false,0,0,,error:410 status code (no body),n/a,""
--,meta/llama-4-scout-17b-16e-instruct,nvidia-nim,openai-completions,(other),false,false,,58,,,false,0,0,,error:410 status code (no body),n/a,""
+-,qwen/qwen3-coder-480b-a35b-instruct,nvidia-nim,openai-completions,(other),true,false,,4001,,,false,0,0,,timeout,n/a,""
+-,qwen/qwen3-235b-a22b,nvidia-nim,openai-completions,(other),true,false,,162,,,false,0,0,,error:410 status code (no body),n/a,""
+-,qwen/qwen3-next-80b-a3b-thinking,nvidia-nim,openai-completions,(other),true,true,,1216,156,128,false,0,0,0,empty,empty,""
+-,qwen/qwq-32b,nvidia-nim,openai-completions,(other),true,false,,160,,,false,0,0,,error:410 status code (no body),n/a,""
+-,meta/llama-4-scout-17b-16e-instruct,nvidia-nim,openai-completions,(other),false,false,,48,,,false,0,0,,error:410 status code (no body),n/a,""
+-,meta/llama-3.3-70b-instruct,nvidia-nim,openai-completions,(other),false,false,,4000,,,false,0,0,,timeout,n/a,""
 -,meta/llama-3.1-405b-instruct,nvidia-nim,openai-completions,(other),false,false,,49,,,false,0,0,,error:410 status code (no body),n/a,""
 -,meta/llama-3.2-90b-vision-instruct,nvidia-nim,openai-completions,(other),false,false,,4001,,,false,0,0,,timeout,n/a,""
--,mistralai/mistral-large-3-675b-instruct-2512,nvidia-nim,openai-completions,(other),false,false,,4000,,,false,0,0,,timeout,n/a,""
--,mistralai/mistral-medium-3-instruct,nvidia-nim,openai-completions,(other),false,false,,127,,,false,0,0,,error:410 status code (no body),n/a,""
--,mistralai/devstral-2-123b-instruct-2512,nvidia-nim,openai-completions,(other),false,false,,47,,,false,0,0,,error:410 status code (no body),n/a,""
--,mistralai/magistral-small-2506,nvidia-nim,openai-completions,(other),true,false,,46,,,false,0,0,,error:410 status code (no body),n/a,""
--,nvidia/llama-3.1-nemotron-ultra-253b-v1,nvidia-nim,openai-completions,(other),true,false,,148,,,false,0,0,,error:404 status code (no body),n/a,""
--,nvidia/llama-3.3-nemotron-super-49b-v1.5,nvidia-nim,openai-completions,(other),true,true,,3618,159,128,false,0,0,0,empty,empty,""
--,deepseek-ai/deepseek-r1-distill-qwen-32b,nvidia-nim,openai-completions,(other),true,false,,101,,,false,0,0,,error:410 status code (no body),n/a,""
--,deepseek-ai/deepseek-r1-distill-qwen-14b,nvidia-nim,openai-completions,(other),true,false,,223,,,false,0,0,,error:410 status code (no body),n/a,""
--,microsoft/phi-4-mini-flash-reasoning,nvidia-nim,openai-completions,flash,true,false,,51,,,false,0,0,,error:410 status code (no body),n/a,""
+-,mistralai/mistral-large-3-675b-instruct-2512,nvidia-nim,openai-completions,(other),false,false,,4001,,,false,0,0,,timeout,n/a,""
+-,mistralai/mistral-medium-3-instruct,nvidia-nim,openai-completions,(other),false,false,,47,,,false,0,0,,error:410 status code (no body),n/a,""
+-,mistralai/devstral-2-123b-instruct-2512,nvidia-nim,openai-completions,(other),false,false,,59,,,false,0,0,,error:410 status code (no body),n/a,""
+-,mistralai/magistral-small-2506,nvidia-nim,openai-completions,(other),true,false,,48,,,false,0,0,,error:410 status code (no body),n/a,""
+-,nvidia/llama-3.1-nemotron-ultra-253b-v1,nvidia-nim,openai-completions,(other),true,false,,163,,,false,0,0,,error:404 status code (no body),n/a,""
+-,nvidia/llama-3.3-nemotron-super-49b-v1.5,nvidia-nim,openai-completions,(other),true,false,,4001,,,false,0,0,,timeout,n/a,""
+-,deepseek-ai/deepseek-r1-distill-qwen-32b,nvidia-nim,openai-completions,(other),true,false,,49,,,false,0,0,,error:410 status code (no body),n/a,""
+-,deepseek-ai/deepseek-r1-distill-qwen-14b,nvidia-nim,openai-completions,(other),true,false,,150,,,false,0,0,,error:410 status code (no body),n/a,""
+-,microsoft/phi-4-mini-flash-reasoning,nvidia-nim,openai-completions,flash,true,false,,142,,,false,0,0,,error:410 status code (no body),n/a,""
 -,microsoft/phi-4-mini-instruct,nvidia-nim,openai-completions,mini,false,false,,4001,,,false,0,0,,timeout,n/a,""
--,ibm/granite-3.3-8b-instruct,nvidia-nim,openai-completions,(other),false,false,,117,,,false,0,0,,error:410 status code (no body),n/a,""
+-,ibm/granite-3.3-8b-instruct,nvidia-nim,openai-completions,(other),false,false,,52,,,false,0,0,,error:410 status code (no body),n/a,""

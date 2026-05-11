@@ -1,5 +1,9 @@
 # pi-bench
 
+![pi-bench banner](https://fcskjxapefiqdclrvbtw.supabase.co/storage/v1/object/public/assets/pi-packages/pi-bench-banner.jpg)
+
+**The LLM benchmark toolkit for [pi coding agent](https://github.com/badlogic/pi-mono).**
+
 Find the fastest, cheapest LLM models among all registered providers.
 
 Probes every available model with a real `stream()` call using a representative prompt, then ranks by latency, cost, and output quality. Designed to feed smart model selection into [pi-recap](https://github.com/fornace/pi-recap) and other pi extensions.
@@ -111,6 +115,61 @@ RANK  FB      TOTAL   COST         FAMILY   PROVIDER           ID
 
 Top models are typically Alibaba Cloud Qwen variants at sub-700ms latency and ~$0 cost.
 
+## Headless mode — using pi-bench from other plugins
+
+pi-bench is designed to be consumed by other pi extensions. There are three integration patterns:
+
+### Static imports (no runtime)
+
+Import curated data directly from the package — no benchmark run needed:
+
+```typescript
+import { CURATED_CHAIN, BLACKLIST_SEED } from "pi-bench";
+
+// CURATED_CHAIN: ordered list of fast/cheap model IDs, ranked by latest bench
+// BLACKLIST_SEED: known-bad models (404s, refusals, empty responses)
+```
+
+[pi-recap](https://github.com/fornace/pi-recap) uses this for its model picker chain. When you run a new benchmark, pi-bench updates `CURATED_CHAIN` and pi-recap picks up the new winners automatically — no config changes needed.
+
+### Benchmark UI component
+
+Reuse the interactive model selector from your own extension:
+
+```typescript
+import { showBenchmarkUI } from "pi-bench/ui.js";
+
+// csvPath points to bench-results-v6.csv
+const picked = await showBenchmarkUI(ctx, csvPath, "Pick a model");
+```
+
+This renders a scrollable, filterable SelectList with all benched models ranked by latency. Returns the selected model ID. Used by pi-recap's `/recap → model: ...` menu.
+
+### Finding the benchmark data directory
+
+The CSV lives in the pi-bench extension directory. Resolve it at runtime:
+
+```typescript
+import { fileURLToPath } from "node:url";
+import * as path from "node:path";
+
+const benchDir = path.dirname(fileURLToPath(import.meta.resolve("pi-bench/package.json")));
+const csvPath = path.join(benchDir, "bench-results-v6.csv");
+```
+
+### Headless vs UI mode
+
+When pi-bench runs as a slash command (`/bench`), it detects whether a TUI is available via `ctx.hasUI`. Without a TUI (headless mode), results are printed to the console. With a TUI, the interactive selector is shown. The same benchmark subprocess runs in both cases — only the output display changes.
+
 ## License
 
 MIT
+
+## From the same author
+
+By [Francesco Frapporti](https://fornace.it) at [Fornace](https://fornace.it).
+
+- **[pi-recap](https://github.com/fornace/pi-recap)** — Always-visible session recap panel for pi. Uses pi-bench data to pick the fastest summarization model.
+- **[pi-banana](https://github.com/fornace/pi-banana)** — Generate and edit images inside pi using Google Nano Banana. Banner images for all these packages were created with pi-banana.
+- **[pi-alibaba-models](https://github.com/fornace/pi-alibaba-models)** — Complete Alibaba provider for pi: Qwen, DeepSeek, Kimi, GLM, MiniMax with native thinking levels.
+- **[pi-notte-theme](https://github.com/fornace/pi-notte-theme)** — Notte: a true-dark pi theme where darkness has color and text glows like terminal phosphor.

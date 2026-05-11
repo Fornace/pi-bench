@@ -30,7 +30,9 @@ export default function (pi: ExtensionAPI) {
 			const match = args.match(/--output-dir\s+([^\s]+)/);
 			if (match) outputDir = match[1]!;
 
-			if (!ctx?.hasUI) {
+			const hasUI = Boolean(ctx?.hasUI);
+
+			if (!hasUI) {
 				console.log("[pi-bench] Running bench (no UI)...");
 			} else {
 				ctx.ui.notify("Running model benchmark...", "info");
@@ -44,7 +46,10 @@ export default function (pi: ExtensionAPI) {
 
 			let stderr = "";
 
+			// When UI is active, suppress console output to avoid
+			// corrupting the TUI display. Only show output in no-UI mode.
 			child.stdout.on("data", (chunk) => {
+				if (hasUI) return;
 				const lines = chunk.toString().split("\n");
 				for (const line of lines) {
 					if (line.includes("->") || line.includes("done in") || line.includes("timings:")) {
@@ -68,38 +73,49 @@ export default function (pi: ExtensionAPI) {
 			// Read and show top results
 			const csvPath = path.join(outputDir, "bench-results-v6.csv");
 			if (fs.existsSync(csvPath)) {
-				if (ctx?.hasUI) {
-					await showBenchmarkUI(ctx, csvPath, "Bench complete. Top models");
-				} else {
-					const csv = fs.readFileSync(csvPath, "utf8");
-					const lines = csv.split("\n").filter((l) => l.trim());
-					const header = lines[0]!;
-					const idxId = header.split(",").indexOf("id");
-					const idxLatency = header.split(",").indexOf("t_complete_ms");
-					const idxQuality = header.split(",").indexOf("quality");
-					const idxProvider = header.split(",").indexOf("provider");
-	
-					const topRows = lines.slice(1, 6).filter((l) => {
-						const rank = l.split(",")[0];
-						return rank && rank !== "-";
-					});
-	
-					if (topRows.length > 0) {
-						const summary = topRows.map((row) => {
-							const cols = row.split(",");
-							return `${cols[idxId]!} (${cols[idxProvider]!}) - ${cols[idxLatency]!}ms [${cols[idxQuality]!}]`;
-						}).join("\n");
-	
-						console.log(`[pi-bench] Top models:\n${summary}`);
+				if (hasUI) {
+					try {
+						await showBenchmarkUI(ctx, csvPath, "Bench complete. Top models");
+					} catch (err) {
+						// UI crash recovery: fall back to plain text summary
+						console.error("[pi-bench] UI error:", err instanceof Error ? err.message : String(err));
+						const summary = readTopResults(csvPath, 5);
+						if (summary) console.log(`[pi-bench] Top models:\n${summary}`);
+						console.log(`[pi-bench] Full results: ${csvPath}`);
 					}
+				} else {
+					const summary = readTopResults(csvPath, 5);
+					if (summary) console.log(`[pi-bench] Top models:\n${summary}`);
+					console.log(`[pi-bench] Results: ${csvPath}`);
 				}
-
-				console.log(`[pi-bench] Results: ${csvPath}`);
 			} else {
-				if (ctx?.hasUI) {
+				if (hasUI) {
 					ctx.ui.notify("Bench completed but no CSV found.", "warning");
 				}
 			}
 		},
 	});
+}
+
+function readTopResults(csvPath: string, count: number): string | undefined {
+	const csv = fs.readFileSync(csvPath, "utf8");
+	const lines = csv.split("\n").filter((l) => l.trim());
+	if (lines.length < 2) return undefined;
+	const header = lines[0]!;
+	const cols = header.split(",");
+	const idxId = cols.indexOf("id");
+	const idxLatency = cols.indexOf("t_complete_ms");
+	const idxQuality = cols.indexOf("quality");
+	const idxProvider = cols.indexOf("provider");
+
+	const topRows = lines.slice(1, count + 1).filter((l) => {
+		const rank = l.split(",")[0];
+		return rank && rank !== "-";
+	});
+
+	if (topRows.length === 0) return undefined;
+	return topRows.map((row) => {
+		const v = row.split(",");
+		return `${v[idxId]!} (${v[idxProvider]!}) - ${v[idxLatency]!}ms [${v[idxQuality]!}]`;
+	}).join("\n");
 }
