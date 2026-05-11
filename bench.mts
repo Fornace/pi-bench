@@ -51,28 +51,21 @@ const APIS = ["Stripe", "GitHub", "OpenAI", "AWS", "Cloudflare", "Vercel"];
 const NS = ["30", "50", "100", "200", "500", "1000"];
 const N2S = ["35", "55", "110", "220", "550", "1100"];
 
-function shuffle<T>(arr: T[]): T[] {
-	const a = [...arr];
-	for (let i = a.length - 1; i > 0; i--) {
-		const j = Math.floor(Math.random() * (i + 1));
-		[a[i], a[j]] = [a[j], a[i]];
-	}
-	return a;
+function pick<T>(arr: T[]): T {
+	return arr[Math.floor(Math.random() * arr.length)]!;
 }
 
 function randomPrompt(): string {
-	const tpl = shuffle(PROMPT_TEMPLATES)[0]!;
+	const tpl = pick(PROMPT_TEMPLATES);
 	return tpl
-		.replace("{lang}", shuffle(LANGS)[0]!)
-		.replace("{thing}", shuffle(THINGS)[0]!)
-		.replace("{pkg}", shuffle(PKGS)[0]!)
-		.replace("{api}", shuffle(APIS)[0]!)
-		.replace("{n}", shuffle(NS)[0]!)
-		.replace("{n2}", shuffle(N2S)[0]!);
+		.replace("{lang}", pick(LANGS))
+		.replace("{thing}", pick(THINGS))
+		.replace("{pkg}", pick(PKGS))
+		.replace("{api}", pick(APIS))
+		.replace("{n}", pick(NS))
+		.replace("{n2}", pick(N2S));
 }
 
-// PROMPT is generated fresh for each probe to defeat response caching.
-const PROMPT = () => randomPrompt();
 
 // ── types ──────────────────────────────────────────────────────────────
 
@@ -108,9 +101,6 @@ export interface Candidate {
 export interface BenchStats {
 	starting: number;
 	dropped_blocklist: number;
-	dropped_ctx: number;
-	dropped_reasoning_no_thinking_off: number;
-	dropped_not_fast_not_cheap: number;
 	final: number;
 }
 
@@ -164,7 +154,6 @@ function familyMatch(id: string): string | null {
 	return null;
 }
 
-const MIN_CTX = 1024;
 const CHEAP_THRESHOLD = 1.0;
 
 function thinkingOffOpts(model: Model<Api>): Record<string, unknown> {
@@ -190,7 +179,7 @@ function hasThinkingOffSupport(m: Model<Api>): boolean {
 }
 
 function filterCandidates(all: Model<Api>[]): { candidates: Candidate[]; stats: BenchStats; dropped: { id: string; reason: string }[] } {
-	const stats: BenchStats = { starting: all.length, dropped_blocklist: 0, dropped_ctx: 0, dropped_reasoning_no_thinking_off: 0, dropped_not_fast_not_cheap: 0, final: 0 };
+	const stats: BenchStats = { starting: all.length, dropped_blocklist: 0, final: 0 };
 	const dropped: { id: string; reason: string }[] = [];
 	const candidates: Candidate[] = [];
 
@@ -241,7 +230,7 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 
 	// Generate the prompt once so the same text is used for the API call
 	// and for token estimation.
-	const promptText = PROMPT();
+	const promptText = randomPrompt();
 	base.promptUsed = promptText;
 	if (!auth.ok) { base.status = `error:auth:${auth.error.slice(0, 60)}`; return base; }
 	if (!auth.apiKey) { base.status = "error:no-apikey"; return base; }

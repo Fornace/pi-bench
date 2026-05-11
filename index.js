@@ -52,7 +52,7 @@ function default_1(pi) {
     pi.registerCommand("bench", {
         description: "Run LLM model benchmark probe across all registered providers",
         usage: "/bench [--output-dir /path]",
-        async run(ctx, args) {
+        handler: async (args, ctx) {
             const benchScript = path.join(__dirname, "bench.mts");
             const outputDir = args?.outputDir ?? __dirname;
             if (!ctx?.hasUI) {
@@ -66,11 +66,8 @@ function default_1(pi) {
                 env: process.env,
                 cwd: __dirname,
             });
-            let stdout = "";
             let stderr = "";
             child.stdout.on("data", (chunk) => {
-                stdout += chunk.toString();
-                // Stream progress to console
                 const lines = chunk.toString().split("\n");
                 for (const line of lines) {
                     if (line.includes("->") || line.includes("done in") || line.includes("timings:")) {
