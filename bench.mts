@@ -243,30 +243,37 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 
 	const timeout = new Promise<"timeout">((resolve) => { setTimeout(() => { timedOut = true; resolve("timeout"); }, timeoutMs); });
 	const work = (async () => {
-		const events = stream(m, {
-			systemPrompt: SYSTEM,
-			messages: [{ role: "user", content: [{ type: "text", text: promptText }], timestamp: Date.now() }],
-		}, { apiKey: auth.apiKey!, headers: auth.headers || {}, maxTokens: 128, temperature: 0, ...thinkingOffOpts(m) });
+		// Suppress @google/genai console.debug that fires on every vertex client creation
+		const origDebug = console.debug;
+		console.debug = () => {};
+		try {
+			const events = stream(m, {
+				systemPrompt: SYSTEM,
+				messages: [{ role: "user", content: [{ type: "text", text: promptText }], timestamp: Date.now() }],
+			}, { apiKey: auth.apiKey!, headers: auth.headers || {}, maxTokens: 128, temperature: 0, ...thinkingOffOpts(m) });
 
-		for await (const event of events) {
-			if (timedOut) break;
-			if (event.type === "text_delta") {
-				if (firstByteAt === null) firstByteAt = performance.now();
-				running += event.delta;
-			} else if (event.type === "text_end") {
-				if (firstByteAt === null) firstByteAt = performance.now();
-				if (!running && typeof event.content === "string") running = event.content;
-			} else if (event.type === "thinking_start") {
-				base.reasoned = true;
-			} else if (event.type === "done") {
-				finalMessage = event.message;
-			} else if (event.type === "error") {
-				finalMessage = event.error;
-				const reason = event.error?.errorMessage ?? `stop=${event.error?.stopReason}`;
-				throw new Error(reason);
+			for await (const event of events) {
+				if (timedOut) break;
+				if (event.type === "text_delta") {
+					if (firstByteAt === null) firstByteAt = performance.now();
+					running += event.delta;
+				} else if (event.type === "text_end") {
+					if (firstByteAt === null) firstByteAt = performance.now();
+					if (!running && typeof event.content === "string") running = event.content;
+				} else if (event.type === "thinking_start") {
+					base.reasoned = true;
+				} else if (event.type === "done") {
+					finalMessage = event.message;
+				} else if (event.type === "error") {
+					finalMessage = event.error;
+					const reason = event.error?.errorMessage ?? `stop=${event.error?.stopReason}`;
+					throw new Error(reason);
+				}
 			}
+			return "ok" as const;
+		} finally {
+			console.debug = origDebug;
 		}
-		return "ok" as const;
 	})();
 
 	let raceResult: "ok" | "timeout" | Error;
