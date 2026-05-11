@@ -19,6 +19,7 @@
   "main": "bench.mts",
   "exports": {
     ".": "./bench.mts",
+    "./package.json": "./package.json",
     "./ui.js": "./ui.ts"
   },
   "peerDependencies": {
