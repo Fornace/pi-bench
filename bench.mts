@@ -283,9 +283,9 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 	base.tComplete = Math.round(tEnd - t0);
 	base.tFirstByte = firstByteAt !== null ? Math.round(firstByteAt - t0) : null;
 
-	if (raceResult === "timeout") { base.status = "timeout"; base.sample = running.slice(0, 60); return base; }
+	if (raceResult === "timeout") { base.status = "timeout"; base.sample = running.replace(/[\r\n]+/g, " ").slice(0, 60); return base; }
 	if (raceResult instanceof Error) {
-		const msg = raceResult.message;
+		const msg = raceResult.message.replace(/[\r\n]+/g, " ");
 		let short = msg;
 		const m402 = msg.match(/402[^"]*/); const m401 = msg.match(/401[^"]*/); const m429 = msg.match(/429[^"]*/); const m400 = msg.match(/400[^"]*/);
 		if (m402) short = `402 ${msg.includes("credit") ? "credits" : "payment"}`;
@@ -293,7 +293,7 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 		else if (m429) short = "429 rate";
 		else if (m400) short = `400 ${msg.slice(0, 40)}`;
 		else short = msg.slice(0, 60);
-		base.status = `error:${short}`; base.sample = running.slice(0, 60); return base;
+		base.status = `error:${short}`; base.sample = running.replace(/[\r\n]+/g, " ").slice(0, 60); return base;
 	}
 
 	if (finalMessage?.usage) { base.promptTokens = finalMessage.usage.input ?? null; base.outputTokens = finalMessage.usage.output ?? null; base.tokensEstimated = false; }
@@ -413,8 +413,9 @@ function writeCsv(results: ProbeResult[], filePath: string): void {
 	for (let i = 0; i < sorted.length; i++) {
 		const r = sorted[i]!;
 		const rank = r.status === "ok" ? String(i + 1) : "-";
-		const sample = (r.sample ?? "").replace(/"/g, '""');
-		lines.push([rank, r.id, r.provider, r.api, r.family, r.reasoning, r.reasoned, r.tFirstByte ?? "", r.tComplete ?? "", r.promptTokens ?? "", r.outputTokens ?? "", r.tokensEstimated, r.costInput, r.costOutput, r.costUSD ?? "", r.status, r.quality, `"${sample}"`].join(","));
+		const sample = (r.sample ?? "").replace(/[\r\n]+/g, " ").replace(/"/g, '""');
+		const safeStatus = (r.status ?? "").replace(/[\r\n]+/g, " ");
+		lines.push([rank, r.id, r.provider, r.api, r.family, r.reasoning, r.reasoned, r.tFirstByte ?? "", r.tComplete ?? "", r.promptTokens ?? "", r.outputTokens ?? "", r.tokensEstimated, r.costInput, r.costOutput, r.costUSD ?? "", safeStatus, r.quality, `"${sample}"`].join(","));
 	}
 	fs.writeFileSync(filePath, lines.join("\n"));
 }
@@ -480,6 +481,7 @@ async function loadExtensions(registry: ModelRegistry) {
 
 export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 	const outputDir = opts.outputDir ?? __dirname;
+	fs.mkdirSync(outputDir, { recursive: true });
 	const timeoutMs = opts.timeoutMs ?? TOTAL_RUN_TIMEOUT_MS;
 	const concurrency = opts.concurrency ?? CONCURRENCY_PER_PROVIDER;
 

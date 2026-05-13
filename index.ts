@@ -116,6 +116,10 @@ function readTopResults(csvPath: string, count: number): string | undefined {
 	if (topRows.length === 0) return undefined;
 	return topRows.map((row) => {
 		const v = row.split(",");
-		return `${v[idxId]!} (${v[idxProvider]!}) - ${v[idxLatency]!}ms [${v[idxQuality]!}]`;
+		const id = v[idxId] ?? "unknown";
+		const prov = v[idxProvider] ?? "-";
+		const lat = v[idxLatency] ?? "-";
+		const qual = v[idxQuality] ?? "-";
+		return `${id} (${prov}) - ${lat}ms [${qual}]`;
 	}).join("\n");
 }

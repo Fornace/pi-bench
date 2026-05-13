@@ -54,9 +54,9 @@ export async function showBenchmarkUI(
 	// causes escape-code nesting that garbles the display.
 	const pickOptions = allRows.map((line, i) => {
 		const v = line.split(",");
-		const id = v[idxId]!.slice(0, idW);
+		const id = (v[idxId] ?? "unknown").slice(0, idW);
 		const prov = (v[idxProvider] ?? "-").slice(0, provW);
-		const lat = v[idxLatency]!;
+		const lat = v[idxLatency] ?? "-";
 		const cost = fmtCost(v[idxCost] ?? "");
 		const tok = v[idxTok] ?? "-";
 		const qual = (v[idxQuality] ?? "-").slice(0, qualW);
@@ -83,7 +83,7 @@ export async function showBenchmarkUI(
 
 				const items = pickOptions.map((opt, i) => {
 					const v = allRows[i]!.split(",");
-					const rawId = v[idxId]!;
+					const rawId = v[idxId] ?? "unknown";
 					return { value: rawId, label: opt };
 				});
 				
