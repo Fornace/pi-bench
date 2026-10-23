@@ -1,12 +1,12 @@
 /**
  * Standalone LLM model benchmark probe.
  *
- * Loads pi extensions universally, probes all available models with a
- * representative prompt, and ranks them by latency, cost, and quality.
+ * Loads pi extensions on Pi 1.4's ModelRuntime/ModelRegistry, probes available
+ * chat models with a representative prompt, and ranks them by latency, cost, and quality.
  *
  * Usage:
  *   # CLI:
- *   npx -y -p tsx tsx bench.mts [--output-dir /path]
+ *   node --experimental-strip-types bench.mts [--output-dir /path] [--dry-run]
  *
  *   # Programmatic:
  *   import { runBench } from "./bench.mts";
@@ -17,13 +17,11 @@ import * as os from "node:os";
 import * as fs from "node:fs";
 import * as path from "node:path";
 import { fileURLToPath } from "node:url";
-import { execSync } from "node:child_process";
+import type { Api, AssistantMessage, Model } from "@earendil-works/pi-ai";
+import { createAgentSessionServices, ModelRegistry } from "@earendil-works/pi-coding-agent";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-import type { Api, AssistantMessage, Model } from "@earendil-works/pi-ai";
-import { stream } from "@earendil-works/pi-ai";
-import { AuthStorage, ModelRegistry, discoverAndLoadExtensions } from "@earendil-works/pi-coding-agent";
 
 // ── tunables ───────────────────────────────────────────────────────────
 
@@ -32,11 +30,8 @@ export const TOTAL_RUN_TIMEOUT_MS = 30 * 1000;
 export const CONCURRENCY_PER_PROVIDER = 8;
 export const BATCH_GAP_MS = 200;
 
-const SYSTEM = `You write one-line recaps of user messages. Output a single sentence in past tense. Be specific. No preamble.`;
+const SYSTEM = `You write one-line summaries of user messages. Output a single sentence in past tense. Be specific. No preamble.`;
 
-// Word pools for randomised prompts so providers can't cache responses.
-// Each probe gets a unique prompt assembled from shuffled fragments.
-// Prompts are ~500 chars to match real recap workload (not short probes).
 const PROMPT_TEMPLATES = [
 	"I'm trying to debug why my {lang} script hangs after {n} iterations of an HTTPS API call. {pkg}, timeouts already added. The script reads from a config file, authenticates via OAuth2, then loops through a list of {n} endpoints. Each call should return within 200ms but after about 30 iterations the whole thing freezes. No error messages, no stack traces — it just stops. I've added logging before and after each request but the logs don't show where it's getting stuck. Memory usage stays flat so it's not a leak. I'm wondering if it's a connection pool issue or rate limiting on the {api} side.",
 	"Need help refactoring a {lang} {thing} that's grown to {n} lines over the past six months. It started as a simple script to sync data between our internal DB and the {api} API, but now it handles auth retries, pagination, webhook callbacks, error reporting, and a scheduling system bolted on top. Every time I touch one part something else breaks. I want to split it into smaller focused modules but I'm not sure where to draw the boundaries. The current version calls {api} in a loop with {pkg} and processes each response inline, which makes it hard to test individual pieces.",
@@ -65,7 +60,6 @@ function randomPrompt(): string {
 		.replace("{n}", pick(NS))
 		.replace("{n2}", pick(N2S));
 }
-
 
 // ── types ──────────────────────────────────────────────────────────────
 
@@ -116,6 +110,7 @@ export interface BenchOpts {
 	outputDir?: string;
 	timeoutMs?: number;
 	concurrency?: number;
+	dryRun?: boolean;
 }
 
 // ── filter ─────────────────────────────────────────────────────────────
@@ -156,24 +151,13 @@ function familyMatch(id: string): string | null {
 
 const CHEAP_THRESHOLD = 1.0;
 
-function thinkingOffOpts(model: Model<Api>): Record<string, unknown> {
-	switch (model.api) {
-		case "anthropic-messages":
-			return { thinkingEnabled: false };
-		case "google-generative-ai":
-		case "google-vertex":
-			return { thinking: { enabled: false } };
-		default:
-			return {};
-	}
-}
-
 function hasThinkingOffSupport(m: Model<Api>): boolean {
+	if (!m.reasoning) return true;
 	if (m.api === "anthropic-messages") return true;
 	if (m.api === "google-generative-ai" || m.api === "google-vertex") return true;
 	if (m.thinkingLevelMap) {
 		const map = m.thinkingLevelMap as Record<string, unknown>;
-		if ("none" in map || "off" in map || "minimal" in map || "low" in map) return true;
+		if (map.off !== null || map.minimal !== null || map.low !== null) return true;
 	}
 	return false;
 }
@@ -226,58 +210,59 @@ async function probeOne(registry: ModelRegistry, c: Candidate, timeoutMs: number
 		tokensEstimated: false, costUSD: null, status: "init", sample: "", reasoned: false, quality: "n/a", promptUsed: "",
 	};
 
-	const auth = await registry.getApiKeyAndHeaders(m);
-
-	// Generate the prompt once so the same text is used for the API call
-	// and for token estimation.
 	const promptText = randomPrompt();
 	base.promptUsed = promptText;
+
+	const auth = await registry.getApiKeyAndHeaders(m);
 	if (!auth.ok) { base.status = `error:auth:${auth.error.slice(0, 60)}`; return base; }
-	if (!auth.apiKey) { base.status = "error:no-apikey"; return base; }
 
 	const t0 = performance.now();
 	let firstByteAt: number | null = null;
 	let running = "";
 	let finalMessage: AssistantMessage | undefined;
 	let timedOut = false;
+	const controller = new AbortController();
+	const timer = setTimeout(() => {
+		timedOut = true;
+		controller.abort();
+	}, timeoutMs);
+	timer.unref?.();
 
-	const timeout = new Promise<"timeout">((resolve) => { setTimeout(() => { timedOut = true; resolve("timeout"); }, timeoutMs); });
-	const work = (async () => {
-		// Suppress @google/genai console.debug that fires on every vertex client creation
-		const origDebug = console.debug;
-		console.debug = () => {};
-		try {
-			const events = stream(m, {
-				systemPrompt: SYSTEM,
-				messages: [{ role: "user", content: [{ type: "text", text: promptText }], timestamp: Date.now() }],
-			}, { apiKey: auth.apiKey!, headers: auth.headers || {}, maxTokens: 128, temperature: 0, ...thinkingOffOpts(m) });
+	let raceResult: "ok" | "timeout" | Error = "ok";
+	try {
+		const events = registry.streamSimple(m, {
+			systemPrompt: SYSTEM,
+			messages: [{ role: "user", content: [{ type: "text", text: promptText }], timestamp: Date.now() }],
+		}, { maxTokens: 128, temperature: 0, reasoning: "off", signal: controller.signal, maxRetries: 0 });
 
-			for await (const event of events) {
-				if (timedOut) break;
-				if (event.type === "text_delta") {
-					if (firstByteAt === null) firstByteAt = performance.now();
-					running += event.delta;
-				} else if (event.type === "text_end") {
-					if (firstByteAt === null) firstByteAt = performance.now();
-					if (!running && typeof event.content === "string") running = event.content;
-				} else if (event.type === "thinking_start") {
-					base.reasoned = true;
-				} else if (event.type === "done") {
-					finalMessage = event.message;
-				} else if (event.type === "error") {
-					finalMessage = event.error;
-					const reason = event.error?.errorMessage ?? `stop=${event.error?.stopReason}`;
-					throw new Error(reason);
+		for await (const event of events) {
+			if (timedOut) break;
+			if (event.type === "text_delta") {
+				if (firstByteAt === null) firstByteAt = performance.now();
+				running += event.delta;
+			} else if (event.type === "text_end") {
+				if (firstByteAt === null) firstByteAt = performance.now();
+				if (!running && typeof event.content === "string") running = event.content;
+			} else if (event.type === "thinking_start") {
+				base.reasoned = true;
+			} else if (event.type === "done") {
+				finalMessage = event.message;
+			} else if (event.type === "error") {
+				finalMessage = event.error;
+				if (timedOut || event.error?.stopReason === "aborted") {
+					raceResult = "timeout";
+					break;
 				}
+				const reason = event.error?.errorMessage ?? `stop=${event.error?.stopReason}`;
+				throw new Error(reason);
 			}
-			return "ok" as const;
-		} finally {
-			console.debug = origDebug;
 		}
-	})();
-
-	let raceResult: "ok" | "timeout" | Error;
-	try { raceResult = await Promise.race([work, timeout]) as any; } catch (err) { raceResult = err as Error; }
+		if (timedOut) raceResult = "timeout";
+	} catch (err) {
+		raceResult = timedOut ? "timeout" : (err as Error);
+	} finally {
+		clearTimeout(timer);
+	}
 
 	const tEnd = performance.now();
 	base.tComplete = Math.round(tEnd - t0);
@@ -347,43 +332,6 @@ function fmtMs(v: number | null): string { return v === null ? "-" : `${v}ms`; }
 function fmtUSD(v: number | null): string { return v === null ? "-" : v < 0.000001 ? "~$0" : `$${v.toFixed(6)}`; }
 function pad(s: string, w: number): string { return s.length >= w ? s.slice(0, w) : s + " ".repeat(w - s.length); }
 
-// ── curated data (consumed by pi-recap) ────────────────────────────────
-//
-// CURATED_CHAIN: hand-picked ordered list of fast/cheap recap candidates.
-// Top-to-bottom: fastest + cheapest first per the latest bench.
-// Some entries are stubs for OTHER users (different provider keys); they
-// only resolve if registry.getAvailable() returns them.
-
-export const CURATED_CHAIN: ReadonlyArray<string> = [
-	"gemini-2.5-flash-lite",                // google-vertex (bench rank 1, 460ms)
-	"MiniMaxAI/MiniMax-M2.5",               // huggingface (bench rank 2, 720ms)
-	"gemini-2.5-flash",                     // google-vertex (bench rank 3, 775ms)
-	"claude-haiku-4.5",                     // anthropic
-	"gpt-5-mini",                           // openai
-	"kimi-for-coding",                      // kimi-coding (bench rank 6, 1623ms)
-	"moonshotai/Kimi-K2-Instruct",          // huggingface (bench rank 9, 1858ms)
-];
-
-// BLACKLIST_SEED: known-bad models discovered during benching.
-// Bootstrapped once into pi-recap's blacklist.json on first load.
-
-export const BLACKLIST_SEED: ReadonlyArray<{ id: string; reason: string }> = [
-	{ id: "gemini-1.5-flash", reason: "404 endpoint retired" },
-	{ id: "gemini-1.5-flash-8b", reason: "404 endpoint retired" },
-	{ id: "gemini-2.0-flash", reason: "404 endpoint retired" },
-	{ id: "gemini-2.0-flash-lite", reason: "404 endpoint retired" },
-	{ id: "gemini-2.5-flash-lite-preview-09-2025", reason: "404 preview decommissioned" },
-	{ id: "moonshotai/Kimi-K2-Thinking", reason: "empty + reasoning" },
-	{ id: "zai-org/GLM-4.7-Flash", reason: "empty + reasoning" },
-	{ id: "moonshotai/Kimi-K2.6", reason: "empty + reasoning" },
-	{ id: "moonshotai/Kimi-K2-Instruct-0905", reason: "empty + reasoning" },
-	{ id: "zai-org/GLM-4.7", reason: "400 status code" },
-	{ id: "zai-org/GLM-5.1", reason: "empty + reasoning" },
-	{ id: "nvidia/nemotron-nano-9b-v2:free", reason: "empty + reasoning" },
-	{ id: "nvidia/nemotron-nano-12b-v2-vl:free", reason: "empty + reasoning" },
-	{ id: "deepseek-ai/DeepSeek-V3.2", reason: "empty + reasoning" },
-];
-
 export function printTable(results: ProbeResult[]): string {
 	const ok = results.filter((r) => r.status === "ok").sort((a, b) => (a.tComplete ?? 99999) - (b.tComplete ?? 99999));
 	const fail = results.filter((r) => r.status !== "ok");
@@ -436,65 +384,25 @@ function writeCandidatesCsv(candidates: Candidate[], dropped: { id: string; reas
 
 // ── main bench logic ───────────────────────────────────────────────────
 
-async function loadExtensions(registry: ModelRegistry) {
-	const agentDir = path.join(os.homedir(), ".pi/agent");
-	const settingsPath = path.join(agentDir, "settings.json");
-	const configuredPaths: string[] = [];
-
-	if (fs.existsSync(settingsPath)) {
-		const settings = JSON.parse(fs.readFileSync(settingsPath, "utf8"));
-		const packages: string[] = settings.packages ?? [];
-		const globalNpmRoot = execSync("npm root -g", { encoding: "utf8" }).trim();
-		for (const pkg of packages) {
-			if (pkg.startsWith("npm:")) {
-				const pkgName = pkg.slice(4);
-				const pkgPath = path.join(globalNpmRoot, pkgName);
-				if (fs.existsSync(pkgPath)) configuredPaths.push(pkgPath);
-			}
-		}
-	}
-
-	const { extensions, errors, runtime } = await discoverAndLoadExtensions(configuredPaths, process.cwd(), agentDir, undefined);
-	for (const err of errors) console.error(`[bench] extension error: ${err.path}: ${err.error}`);
-	console.log(`[bench] loaded ${extensions.length} extensions, ${errors.length} errors`);
-
-	for (const { name, config } of runtime.pendingProviderRegistrations) {
-		try { registry.registerProvider(name, config); } catch (err) { console.error(`[bench] failed to register provider ${name}:`, err instanceof Error ? err.message : String(err)); }
-	}
-	const nProviders = runtime.pendingProviderRegistrations.length;
-	runtime.pendingProviderRegistrations = [];
-	console.log(`[bench] registered ${nProviders} providers from extensions`);
-
-	const sessionHandlers: Array<() => Promise<unknown>> = [];
-	for (const ext of extensions) {
-		const handlers = ext.handlers.get("session_start");
-		if (handlers) sessionHandlers.push(...handlers);
-	}
-	if (sessionHandlers.length > 0) {
-		console.log(`[bench] firing ${sessionHandlers.length} session_start handlers...`);
-		const tStart = performance.now();
-		await Promise.race([Promise.allSettled(sessionHandlers.map((h) => h())), new Promise<void>((resolve) => setTimeout(resolve, 15_000))]);
-		const elapsed = Math.round((performance.now() - tStart) / 1000);
-		console.log(`[bench] session_start handlers settled in ${elapsed}s`);
-	}
-}
-
 export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 	const outputDir = opts.outputDir ?? __dirname;
 	fs.mkdirSync(outputDir, { recursive: true });
 	const timeoutMs = opts.timeoutMs ?? TOTAL_RUN_TIMEOUT_MS;
 	const concurrency = opts.concurrency ?? CONCURRENCY_PER_PROVIDER;
+	const agentDir = process.env.PI_CODING_AGENT_DIR || path.join(os.homedir(), ".pi/agent");
 
 	console.log("");
 	console.log("╔══════════════════════════════════════════════════════════╗");
-	console.log("║              🔬  pi-bench  v0.2.2  —  model probe      ║");
+	console.log("║              🔬  pi-bench  v0.3.0  —  model probe      ║");
 	console.log("║  randomised prompts · per-call 4s · total 30s · q8     ║");
 	console.log("╚══════════════════════════════════════════════════════════╝");
 	console.log("");
 	console.log("[bench] loading registry...");
-	const authStorage = AuthStorage.create();
-	const registry = ModelRegistry.create(authStorage);
-	await loadExtensions(registry);
+	const services = await createAgentSessionServices({ cwd: process.cwd(), agentDir });
+	for (const diag of services.diagnostics) {
+		if (diag.type === "error") console.error(`[bench] ${diag.message}`);
+	}
+	const registry = new ModelRegistry(services.modelRuntime);
 
 	const all = registry.getAll();
 	const available = registry.getAvailable();
@@ -507,7 +415,11 @@ export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 	writeCandidatesCsv(candidates, dropped, candidatesPath);
 	console.log(`[bench] wrote ${candidatesPath}`);
 
-	// Group by provider
+	const csvFile = path.join(outputDir, "bench-results-v6.csv");
+	if (opts.dryRun) {
+		return { results: [], csvPath: csvFile, candidatesPath, stats, providerTimings: new Map() };
+	}
+
 	const byProvider = new Map<string, Candidate[]>();
 	for (const c of candidates) {
 		const bucket = byProvider.get(c.model.provider) ?? [];
@@ -516,12 +428,10 @@ export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 	}
 	console.log(`[bench] probing ${candidates.length} candidates across ${byProvider.size} providers (concurrency=${concurrency}/provider), per-call timeout=${PER_CALL_TIMEOUT_MS}ms...`);
 
-	const csvFile = path.join(outputDir, "bench-results-v6.csv");
 	const t0 = performance.now();
 	const results: ProbeResult[] = new Array(candidates.length);
 	const providerTimings = new Map<string, { start: number; end: number; count: number; ok: number; fail: number; timeout: number }>();
 
-	// Run all providers in parallel
 	let globalCursor = 0;
 	const providerPromises: Promise<void>[] = [];
 	for (const [provider, group] of byProvider) {
@@ -534,11 +444,10 @@ export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 				const tag = r.status === "ok" ? `${r.tComplete}ms ${r.outputTokens}tok q=${r.quality}` : r.status;
 				const globalIdx = startIdx + idx;
 				results[globalIdx] = r;
-				// Show a prompt snippet so the user can see randomisation working.
 				const promptSnip = r.promptUsed ? `[${r.promptUsed.slice(0, 20)}…]` : "";
 				console.log(`[bench] [${provider}] ${c.model.id.padEnd(45)} -> ${tag} ${promptSnip}`);
 				return r;
-			}, BATCH_GAP_MS, timeoutMs, (idx, r) => {
+			}, BATCH_GAP_MS, timeoutMs, (_idx, r) => {
 				if (r.status === "ok") timing.ok++;
 				else if (r.status === "timeout") timing.timeout++;
 				else timing.fail++;
@@ -553,7 +462,6 @@ export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 	const dur = Math.round((performance.now() - t0) / 1000);
 	console.log(`[bench] probes done in ${dur}s`);
 
-	// Per-provider timing
 	console.log("\n[bench] provider timings:");
 	const sortedProviders = [...providerTimings.entries()].sort((a, b) => (b[1].end - b[1].start) - (a[1].end - a[1].start));
 	const finalProviderTimings = new Map<string, { elapsed: number; count: number; ok: number; fail: number; timeout: number }>();
@@ -576,17 +484,18 @@ export async function runBench(opts: BenchOpts = {}): Promise<BenchResult> {
 // ── CLI entry point ────────────────────────────────────────────────────
 
 async function main() {
-	// Parse --output-dir from argv
 	let outputDir: string | undefined;
+	let dryRun = false;
 	for (let i = 2; i < process.argv.length; i++) {
 		if (process.argv[i] === "--output-dir" && process.argv[i + 1]) {
 			outputDir = process.argv[++i];
+		} else if (process.argv[i] === "--dry-run") {
+			dryRun = true;
 		}
 	}
-	await runBench({ outputDir });
+	await runBench({ outputDir, dryRun });
 }
 
-// Run CLI if invoked directly
 if (import.meta.url === `file://${process.argv[1]}` || process.argv[1]?.endsWith("bench.mts")) {
 	main().then(() => process.exit(0)).catch((err) => { console.error("[bench] FATAL:", err); process.exit(1); });
 }

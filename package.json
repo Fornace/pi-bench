@@ -1,9 +1,9 @@
 {
   "name": "pi-bench",
-  "version": "0.2.5",
-  "description": "LLM benchmark toolkit for pi coding agent. Probes every available model with real streaming API calls and ranks by latency, cost, and output quality. Provides curated model chain and blacklist for smart model selection in pi-recap and other extensions.",
+  "version": "0.3.0",
+  "description": "LLM benchmark toolkit for pi coding agent. Probes available models with streaming API calls and ranks by latency, cost, and output quality.",
   "license": "MIT",
-  "author": "Francesco",
+  "author": "Francesco Frapporti <effedue@gmail.com>",
   "repository": {
     "type": "git",
     "url": "https://github.com/fornace/pi-bench.git"
@@ -26,19 +26,33 @@
     "headless"
   ],
   "main": "bench.mts",
+  "pi": {
+    "extensions": [
+      "./index.ts"
+    ]
+  },
   "exports": {
     ".": "./bench.mts",
     "./package.json": "./package.json",
     "./ui.js": "./ui.ts"
   },
+  "scripts": {
+    "test": "node --experimental-strip-types bench.mts --dry-run --output-dir /tmp/pi-bench-dryrun"
+  },
   "peerDependencies": {
-    "@earendil-works/pi-ai": ">=0.74.0",
-    "@earendil-works/pi-coding-agent": ">=0.74.0"
+    "@earendil-works/pi-ai": ">=1.4.0",
+    "@earendil-works/pi-coding-agent": ">=1.4.0",
+    "@earendil-works/pi-tui": ">=1.4.0"
   },
   "devDependencies": {
-    "@earendil-works/pi-tui": "^0.74.0",
-    "@types/node": "^25.6.2",
-    "typescript": "^6.0.3"
+    "@earendil-works/pi-ai": "1.4.0",
+    "@earendil-works/pi-coding-agent": "1.4.0",
+    "@earendil-works/pi-tui": "1.4.0",
+    "@types/node": "^26.6.3",
+    "typescript": "^5.6.0"
+  },
+  "engines": {
+    "node": ">=22.23.4"
   },
   "type": "module"
 }

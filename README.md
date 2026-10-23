@@ -6,7 +6,7 @@
 
 Find the fastest, cheapest LLM models among all registered providers.
 
-Probes every available model with a real `stream()` call using a representative prompt, then ranks by latency, cost, and output quality. Designed to feed smart model selection into [pi-recap](https://github.com/fornace/pi-recap) and other pi extensions.
+Probes every available model with a real `streamSimple()` call using a representative prompt, then ranks by latency, cost, and output quality.
 
 ## Features
 
@@ -39,14 +39,13 @@ Results are saved to `bench-results-v6.csv` in the extension directory.
 ### Standalone CLI
 
 ```bash
-cd ~/.pi/agent/extensions/pi-bench
-npx -y -p tsx tsx bench.mts
+node --experimental-strip-types bench.mts
 ```
 
-With custom output directory:
+Dry-run candidate inspection (no model API calls):
 
 ```bash
-npx -y -p tsx tsx bench.mts --output-dir /tmp/bench-output
+node --experimental-strip-types bench.mts --dry-run --output-dir /tmp/bench-output
 ```
 
 ### Programmatic
@@ -115,22 +114,7 @@ RANK  FB      TOTAL   COST         FAMILY   PROVIDER           ID
 
 Top models are typically Alibaba Cloud Qwen variants at sub-700ms latency and ~$0 cost.
 
-## Headless mode — using pi-bench from other plugins
-
-pi-bench is designed to be consumed by other pi extensions. There are three integration patterns:
-
-### Static imports (no runtime)
-
-Import curated data directly from the package — no benchmark run needed:
-
-```typescript
-import { CURATED_CHAIN, BLACKLIST_SEED } from "pi-bench";
-
-// CURATED_CHAIN: ordered list of fast/cheap model IDs, ranked by latest bench
-// BLACKLIST_SEED: known-bad models (404s, refusals, empty responses)
-```
-
-[pi-recap](https://github.com/fornace/pi-recap) uses this for its model picker chain. When you run a new benchmark, pi-bench updates `CURATED_CHAIN` and pi-recap picks up the new winners automatically — no config changes needed.
+## Headless mode and UI component
 
 ### Benchmark UI component
 
@@ -143,7 +127,7 @@ import { showBenchmarkUI } from "pi-bench/ui.js";
 const picked = await showBenchmarkUI(ctx, csvPath, "Pick a model");
 ```
 
-This renders a scrollable, filterable SelectList with all benched models ranked by latency. Returns the selected model ID. Used by pi-recap's `/recap → model: ...` menu.
+This renders a scrollable, filterable SelectList with all benched models ranked by latency and returns the selected model ID.
 
 ### Finding the benchmark data directory
 
